@@ -1,5 +1,5 @@
 //Discord
-const Discord = require("discord.js");
+const  Discord = require("discord.js");
 const client = new Discord.Client();
 const prefix = ";"
 const ytdl = require("ytdl-core");
@@ -76,6 +76,31 @@ client.on("message", async message => {
       message.reply("Va en voc débile");
     }
     return;
+  }
+
+  //clear
+  else if (command === "clear") {
+    let nbr = args[0];
+    await message.delete()
+        
+    if (message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+      if (nbr) {
+        const { size } = await message.channel.bulkDelete(nbr, true)
+        const guild = client.guilds.cache.get("1008659270251843684");
+        if (guild) {
+          guild.channels.cache.get("1018477605780979802").send(`Deleted ${size} messages.`);
+        };
+        return;
+      }
+      else {
+        message.channel.send("Bruh faudrait ptet un nombre");
+        return;
+      }
+		}
+		else {
+			message.channel.send("sus :eyes:");
+      return;
+		};
   };
 });
 
