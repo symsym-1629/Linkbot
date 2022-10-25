@@ -3,6 +3,7 @@ const  Discord = require("discord.js");
 const client = new Discord.Client();
 const prefix = ";"
 const ytdl = require("ytdl-core");
+require("dotenv/config");
 
 var embedt = new Discord.MessageEmbed()
   .setColor("#00F5FF")
