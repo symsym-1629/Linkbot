@@ -50,7 +50,12 @@ client.on("message", async message => {
 
   //commande troll
   else if (command === "punchline") {
-    message.channel.send("Tg salarabe la commande est en cours de dev retourne jouer à ta nintendaucshwitz");
+    let punchline = [
+      "Tg salarabe la commande est en cours de dev retourne jouer à ta nintendaucshwitz",
+      "Autre réplique",
+      "etc..."
+    ];
+    message.channel.send(`${punchline[Math.random() * punchline.length>>0]}`);
     return;
   }
   //commande musique
