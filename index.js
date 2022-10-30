@@ -1,6 +1,9 @@
 //Discord
-const  Discord = require("discord.js");
-const client = new Discord.Client();
+const Discord = require("discord.js");
+const { joinVoiceChannel, createAudioResource, createAudioPlayer } = require('@discordjs/voice');
+const client = new Discord.Client({
+  intents: [Discord.Intents.FLAGS.MESSAGE_CONTENT, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILDS]
+});
 const prefix = ";"
 const ytdl = require("ytdl-core");
 require("dotenv/config");
@@ -21,7 +24,8 @@ client.once("ready", () => {
   console.log("Linkbot est en ligne, tout roule");
 });
 
-client.on("message", async message => {
+client.on("messageCreate", async message => {
+  
   if (message.author.bot) return;
   //initialisation des args
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -31,13 +35,13 @@ client.on("message", async message => {
 
   //test
   if (command === "test") {
-    message.channel.send(embedt);
+    message.channel.send({embeds: [embedt]});
     return;
   }
 
   //help
   else if (command === "help") {
-    message.channel.send(embedh);
+    message.channel.send({embeds: [embedh]});
     return;
   }
 
@@ -60,22 +64,17 @@ client.on("message", async message => {
   }
   //commande musique
   else if (command === "play") {
-    if (message.member.voice.channel) {
-      message.member.voice.channel.join().then(connection => {
-
-        let dispatcher = connection.play(ytdl(args[0], { quality: "highestaudio" }));
-
-        dispatcher.on("finish", () => {
-          dispatcher.destroy();
-        });
-
-        dispatcher.on("error", err => {
-          console.log("erreur dans le disparch-truc :" + err);
-        });
-      }).catch(err => {
-        message.reply("meh j'arrive pas à join le voc heuu :" + err);
-        console.log("j'arrive pas à me co mon fuhrer");
-      })
+    if (message.member.voice) {
+      const player = createAudioPlayer()
+      const stream = ytdl(args[0], { filter: 'audioonly' })
+      const resource = createAudioResource(stream)
+      const connection = joinVoiceChannel({
+        channelId: message.member.voice.channelId,
+        guildId: message.guild.id,
+        adapterCreator: message.guild.voiceAdapterCreator
+      }); 
+      connection.subscribe(player)
+      player.play(resource)
       message.reply("jsuis en voc c'est bon");
     }
     else {
