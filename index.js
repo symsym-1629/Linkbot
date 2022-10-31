@@ -1,5 +1,7 @@
 //Discord
 const Discord = require("discord.js");
+const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
+const ytdl = require('ytdl-core');
 const myIntents = new Discord.IntentsBitField();
 myIntents.add(
   Discord.IntentsBitField.Flags.Guilds, 
@@ -13,7 +15,7 @@ const client = new Discord.Client({
   intents: myIntents
 });
 const prefix = ";"
-const { Player } = require("discord-player");
+const { Player, QueryType } = require("discord-player");
 require("dotenv/config");
 
 var embedt = new Discord.EmbedBuilder()
@@ -89,7 +91,7 @@ client.on("messageCreate", async message => {
   //commande musique
   else if (command === "play") {
     const channel = message.member?.voice?.channel;
-    const queue = player.createQueue(message.guild);
+    const player2 = createAudioPlayer()
     
     if (!channel)
       return message.reply("Faudrait ptet rejoindre un voc d'abord");
@@ -107,25 +109,22 @@ client.on("messageCreate", async message => {
 
     if (!args[0])
       return message.reply("avec un truc a rechercher stp"); 
-      
-    const song = await player.search(args[0], {
-      requestedBy: message.author
+    
+    const connection = joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator,
+      selfDeaf: false,
+      selfMute: false,
     });
-    
-    if (!song || !song.tracks.length)
-      return message.reply(`Mec t'as cherché quoi j'ai r trouvé`);
 
+    const query = ytdl(args[0], { filter: 'audioonly' });
+    const resource = createAudioResource(query);
+    player2.play(resource);
+    connection.subscribe(player2);
+    client.user.setActivity(`${query.name}`, { type: Discord.ActivityType.Listening });
+    message.reply("narmolment ca joue..."); 
     
-    try {
-        await queue.connect(channel);
-    } catch {
-        message.reply("Je peux pas rejoindre bro");
-    }
-    let tr = song.tracks[0]
-    queue.addTrack(song.tracks[0]);
-    queue.play(song.tracks[0]);
-    client.user.setActivity(`${tr.title}`, { type: Discord.ActivityType.Listening });
-    message.reply("narmolment ca joue...");
   }
   
   //clear
