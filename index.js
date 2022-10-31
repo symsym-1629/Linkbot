@@ -1,31 +1,55 @@
 //Discord
 const Discord = require("discord.js");
-const { joinVoiceChannel, createAudioResource, createAudioPlayer } = require('@discordjs/voice');
+const myIntents = new Discord.IntentsBitField();
+myIntents.add(
+  Discord.IntentsBitField.Flags.Guilds, 
+  Discord.IntentsBitField.Flags.GuildMessages,
+  Discord.IntentsBitField.Flags.GuildMembers, 
+  Discord.IntentsBitField.Flags.GuildPresences,
+  Discord.IntentsBitField.Flags.MessageContent, 
+  Discord.IntentsBitField.Flags.GuildVoiceStates
+);
 const client = new Discord.Client({
-  intents: [Discord.Intents.FLAGS.MESSAGE_CONTENT, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILDS]
+  intents: myIntents
 });
 const prefix = ";"
-const ytdl = require("ytdl-core");
+const { Player } = require("discord-player");
 require("dotenv/config");
 
-var embedt = new Discord.MessageEmbed()
+var embedt = new Discord.EmbedBuilder()
   .setColor("#00F5FF")
   .setTitle("oui mon fuhrer ?")
-  .setAuthor("Linkbot")
 
 
-var embedh = new Discord.MessageEmbed()
+var embedh = new Discord.EmbedBuilder()
   .setColor("#00F5FF")
   .setTitle("**Commandes du Linkbot**")
-  .setAuthor("Linkbot")
   .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] : permet de supprimer autant de messages que le nombre indiqué \n \n -`de plus certaines commandes sont en cours de dev...`")
 
 client.once("ready", () => {
   console.log("Linkbot est en ligne, tout roule");
 });
 
+client.on("error", console.error);
+client.on("warn", console.warn);
+
+const player = new Player(client, {
+  leaveOnEnd: true,
+  leaveOnStop: false,
+  leaveOnEmpty: true,
+  leaveOnEmptyCooldown: 60000,
+  autoSelfDeaf: true,
+  initialVolume: 100
+});
+
+player.on("error", (queue, error) => {
+    console.log(`[${queue.guild.name}] Error emitted from the queue: ${error.message}`);
+});
+player.on("connectionError", (queue, error) => {
+    console.log(`[${queue.guild.name}] Error emitted from the connection: ${error.message}`);
+});
+
 client.on("messageCreate", async message => {
-  
   if (message.author.bot) return;
   //initialisation des args
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -64,25 +88,46 @@ client.on("messageCreate", async message => {
   }
   //commande musique
   else if (command === "play") {
-    if (message.member.voice) {
-      const player = createAudioPlayer()
-      const stream = ytdl(args[0], { filter: 'audioonly' })
-      const resource = createAudioResource(stream)
-      const connection = joinVoiceChannel({
-        channelId: message.member.voice.channelId,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator
-      }); 
-      connection.subscribe(player)
-      player.play(resource)
-      message.reply("jsuis en voc c'est bon");
-    }
+    const channel = message.member?.voice?.channel;
+    const queue = player.createQueue(message.guild);
+    
+    if (!channel)
+      return message.reply("Faudrait ptet rejoindre un voc d'abord");
+    
     else {
-      message.reply("Va en voc débile");
+      if (!channel.viewable)
+        return message.reply("Avec la perm de voir le salon ?");
+      if (!channel.joinable)
+        return message.reply("Avec la perm de me connecter au salon ?");
+      if (!channel.speakable)
+        return message.reply("Avec la perm de parler dans le salon ?");
+      if (channel.full)
+        return message.reply("Vous pourriez au moins me faire une place...");
     }
-    return;
-  }
 
+    if (!args[0])
+      return message.reply("avec un truc a rechercher stp"); 
+      
+    const song = await player.search(args[0], {
+      requestedBy: message.author
+    });
+    
+    if (!song || !song.tracks.length)
+      return message.reply(`Mec t'as cherché quoi j'ai r trouvé`);
+
+    
+    try {
+        await queue.connect(channel);
+    } catch {
+        message.reply("Je peux pas rejoindre bro");
+    }
+    let tr = song.tracks[0]
+    queue.addTrack(song.tracks[0]);
+    queue.play(song.tracks[0]);
+    client.user.setActivity(`${tr.title}`, { type: Discord.ActivityType.Listening });
+    message.reply("narmolment ca joue...");
+  }
+  
   //clear
   else if (command === "clear") {
     let nbr = args[0];
