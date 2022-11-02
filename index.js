@@ -1,6 +1,6 @@
 //Discord
 const Discord = require("discord.js");
-const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
+const { createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const myIntents = new Discord.IntentsBitField();
 myIntents.add(
@@ -15,7 +15,7 @@ const client = new Discord.Client({
   intents: myIntents
 });
 const prefix = ";"
-const { Player, QueryType } = require("discord-player");
+const { Player } = require("discord-player");
 require("dotenv/config");
 
 var embedt = new Discord.EmbedBuilder()
