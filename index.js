@@ -109,8 +109,8 @@ client.on("messageCreate", async message => {
     });
     const query = ytdl(song.tracks[0].url, { filter: 'audioonly' });
     const resource = createAudioResource(query);
-    player.play(resource);
     connection.subscribe(player);
+    player.play(resource);
     client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
     message.reply("narmolment ca joue..."); 
 
