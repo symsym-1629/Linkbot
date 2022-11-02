@@ -77,7 +77,7 @@ client.on("messageCreate", async message => {
   else if (command === "play") {
     const channel = message.member?.voice?.channel;
     const player = createAudioPlayer()
-    
+
     if (!channel)
       return message.reply("Faudrait ptet rejoindre un voc d'abord");
     
@@ -95,9 +95,9 @@ client.on("messageCreate", async message => {
     if (!args[0])
       return message.reply("avec un truc a rechercher stp"); 
     
-    let link = args.join(" ");
+    let request = args.join(" ");
 
-    const song = await finder.search(link, {
+    const song = await finder.search(request, {
       requestedBy: message.author
     });
     const connection = joinVoiceChannel({
@@ -113,6 +113,12 @@ client.on("messageCreate", async message => {
     connection.subscribe(player);
     client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
     message.reply("narmolment ca joue..."); 
+
+    player.on(AudioPlayerStatus.Idle, () => {
+      player.stop();
+      connection.destroy();
+      client.user.setActivity();
+    });
     
   }
   
