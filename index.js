@@ -35,45 +35,30 @@ client.once("ready", () => {
 client.on("error", console.error);
 client.on("warn", console.warn);
 
-const player = new Player(client, {
-  leaveOnEnd: true,
-  leaveOnStop: false,
-  leaveOnEmpty: true,
-  leaveOnEmptyCooldown: 60000,
-  autoSelfDeaf: true,
-  initialVolume: 100
-});
-
-player.on("error", (queue, error) => {
-    console.log(`[${queue.guild.name}] Error emitted from the queue: ${error.message}`);
-});
-player.on("connectionError", (queue, error) => {
-    console.log(`[${queue.guild.name}] Error emitted from the connection: ${error.message}`);
-});
+const finder = new Player(client);
 
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
   //initialisation des args
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
-
   //Commandes
 
   //test
   if (command === "test") {
-    message.channel.send({embeds: [embedt]});
+    message.reply({embeds: [embedt]});
     return;
   }
 
   //help
   else if (command === "help") {
-    message.channel.send({embeds: [embedh]});
+    message.reply({embeds: [embedh]});
     return;
   }
 
   //commande en dev
   else if (command === "jojo") {
-    message.channel.send("commande en cours de dev, cheh \nD'ailleurs un peu gay en vrai le manga");
+    message.reply("commande en cours de dev, cheh \nD'ailleurs un peu gay en vrai le manga");
     return;
 
   }
@@ -85,13 +70,13 @@ client.on("messageCreate", async message => {
       "Autre réplique",
       "etc..."
     ];
-    message.channel.send(`${punchline[Math.random() * punchline.length>>0]}`);
+    message.reply(`${punchline[Math.random() * punchline.length>>0]}`);
     return;
   }
   //commande musique
   else if (command === "play") {
     const channel = message.member?.voice?.channel;
-    const player2 = createAudioPlayer()
+    const player = createAudioPlayer()
     
     if (!channel)
       return message.reply("Faudrait ptet rejoindre un voc d'abord");
@@ -110,6 +95,11 @@ client.on("messageCreate", async message => {
     if (!args[0])
       return message.reply("avec un truc a rechercher stp"); 
     
+    let link = args.join(" ");
+
+    const song = await finder.search(link, {
+      requestedBy: message.author
+    });
     const connection = joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
@@ -117,12 +107,11 @@ client.on("messageCreate", async message => {
       selfDeaf: false,
       selfMute: false,
     });
-
-    const query = ytdl(args[0], { filter: 'audioonly' });
+    const query = ytdl(song.tracks[0].url, { filter: 'audioonly' });
     const resource = createAudioResource(query);
-    player2.play(resource);
-    connection.subscribe(player2);
-    client.user.setActivity(`${query.name}`, { type: Discord.ActivityType.Listening });
+    player.play(resource);
+    connection.subscribe(player);
+    client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
     message.reply("narmolment ca joue..."); 
     
   }
@@ -130,24 +119,24 @@ client.on("messageCreate", async message => {
   //clear
   else if (command === "clear") {
     let nbr = args[0];
-    await message.delete()
-        
-    if (message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+       
+    if (message.member.permissions.has(Discord.PermissionsBitField.Flags.ManageMessages)) {
       if (nbr) {
-        const { size } = await message.channel.bulkDelete(nbr, true)
+        await message.channel.bulkDelete(parseInt(nbr) + 1, true);
         const guild = client.guilds.cache.get("1008659270251843684");
         if (guild) {
-          guild.channels.cache.get("1018477605780979802").send(`Deleted ${size} messages.`);
+          guild.channels.cache.get("1018477605780979802").send(`deleted ${nbr} messages in ${message.channel.name}.`);
         };
+        
         return;
       }
       else {
-        message.channel.send("Bruh faudrait ptet un nombre");
+        message.reply("Bruh faudrait ptet un nombre");
         return;
       }
 		}
 		else {
-			message.channel.send("sus :eyes:");
+			message.reply("sus :eyes:");
       return;
 		};
   };
