@@ -28,6 +28,8 @@ var embedh = new Discord.EmbedBuilder()
   .setTitle("**Commandes du Linkbot**")
   .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] : permet de supprimer autant de messages que le nombre indiqué \n \n -`de plus certaines commandes sont en cours de dev...`")
 
+var rowPlay = new Discord.ActionRowBuilder()
+  
 client.once("ready", () => {
   console.log("Linkbot est en ligne, tout roule");
 });
