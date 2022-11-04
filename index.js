@@ -29,6 +29,12 @@ var embedh = new Discord.EmbedBuilder()
   .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] : permet de supprimer autant de messages que le nombre indiqué \n \n -`de plus certaines commandes sont en cours de dev...`")
 
 var rowPlay = new Discord.ActionRowBuilder()
+  .addComponents(
+    new Discord.ButtonBuilder()
+      .setCustomId('playButton')
+      .setEmoji('⏯')
+      .setStyle(Discord.ButtonStyle.Primary),
+  );
   
 client.once("ready", () => {
   console.log("Linkbot est en ligne, tout roule");
@@ -38,6 +44,25 @@ client.on("error", console.error);
 client.on("warn", console.warn);
 
 const finder = new Player(client);
+const player = createAudioPlayer()
+
+client.on(Discord.Events.InteractionCreate, interaction => {
+	if (!interaction.isButton()) return;
+
+	if (interaction.customId === "playButton") {
+    if (client.voice) {
+      if (AudioPlayerStatus.Playing) {
+        player.pause();
+      }
+      else {
+        player.play();
+      }
+    }
+    else {
+      interaction.reply({content: "Bruh je suis pas en voc tu sais ?", ephemeral: true});
+    }
+  };
+});
 
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
@@ -78,7 +103,7 @@ client.on("messageCreate", async message => {
   //commande musique
   else if (command === "play") {
     const channel = message.member?.voice?.channel;
-    const player = createAudioPlayer()
+    
 
     if (!channel)
       return message.reply("Faudrait ptet rejoindre un voc d'abord");
@@ -114,7 +139,7 @@ client.on("messageCreate", async message => {
     connection.subscribe(player);
     player.play(resource);
     client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
-    message.reply("narmolment ca joue..."); 
+    message.reply({content: "C'est parti !" , components: [rowPlay]}); 
 
     player.on(AudioPlayerStatus.Idle, () => {
       player.stop();
