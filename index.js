@@ -58,7 +58,7 @@ client.on("messageCreate", async message => {
 
   //commande en dev
   else if (command === "jojo") {
-    message.reply("commande en cours de dev, cheh \nD'ailleurs un peu gay en vrai le manga");
+    message.reply("plouf");
     return;
 
   }
