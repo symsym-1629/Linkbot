@@ -1,3 +1,5 @@
 .env
 dep.js
 .idea/**
+node_modules/
+package-lock.json
