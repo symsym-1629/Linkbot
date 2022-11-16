@@ -51,10 +51,13 @@ client.on(Discord.Events.InteractionCreate, interaction => {
 
 	if (interaction.customId === "playButton") {
     if (client.voice) {
+      console.log(client.voice);
       if (AudioPlayerStatus.Playing) {
+        console.log(AudioPlayerStatus);
         player.pause();
       }
       else {
+        console.log(AudioPlayerStatus);
         player.unpause();
       }
     }
