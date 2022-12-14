@@ -10,6 +10,7 @@
     "ffmpeg-static": "^4.4.1",
     "opusscript": "^0.0.8",
     "tweetnacl": "^1.0.3",
+    "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.2"
   }
 }
