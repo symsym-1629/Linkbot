@@ -51,14 +51,13 @@ client.on(Discord.Events.InteractionCreate, interaction => {
 
 	if (interaction.customId === "playButton") {
     if (client.voice) {
-      console.log(client.voice);
-      if (AudioPlayerStatus.Playing) {
-        console.log(AudioPlayerStatus);
-        player.pause();
+      if (player.state.status == "paused") {
+        player.unpause();
+        interaction.reply({content: "Remis !", ephemeral: true});
       }
       else {
-        console.log(AudioPlayerStatus);
-        player.unpause();
+        player.pause();
+        interaction.reply({content: "Pausé !", ephemeral: true});
       }
     }
     else {
@@ -77,6 +76,9 @@ client.on("messageCreate", async message => {
   //test
   if (command === "test") {
     await message.reply({embeds: [embedt]});
+  }
+  if (command === "unpause") {
+    await player.unpause();
   }
 
   //help
