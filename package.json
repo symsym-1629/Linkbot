@@ -1,4 +1,23 @@
 {
+  "name": "linkbot",
+  "version": "2.0.0",
+  "description": "Linkbot est un bot de diverses choses comme la musique ou encore l'apprentissage du code (surtout ca enft)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/symsym-1629/Linkbot.git"
+  },
+  "keywords": [
+    "link"
+  ],
+  "author": "Link, symsym",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/symsym-1629/Linkbot/issues"
+  },
   "dependencies": {
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.13.0",
@@ -12,5 +31,6 @@
     "tweetnacl": "^1.0.3",
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.2"
-  }
+  },
+  "homepage": "https://github.com/symsym-1629/Linkbot#readme"
 }
