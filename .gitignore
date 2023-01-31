@@ -1,3 +1,4 @@
 .env
 dep.js
 .idea/**
+items.json

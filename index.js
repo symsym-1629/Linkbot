@@ -2,6 +2,7 @@
 const Discord = require("discord.js");
 const { createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
+const fs = require("fs");
 const myIntents = new Discord.IntentsBitField();
 myIntents.add(
   Discord.IntentsBitField.Flags.Guilds, 
@@ -15,46 +16,8 @@ const client = new Discord.Client({
   intents: myIntents
 });
 const prefix = ";"
-const items = [
-  "Lunettes de soleil",
-  "ps5",
-  "tuyau PVC",
-  "crayon",
-  "batte",
-  "magazine porno",
-  "une boule de pétanque",
-  "un gun avec 2 balles",
-  "un ticket de loterie de 5000$",
-  "Une théorie du complot sur la fonction inverse définie sur 0",
-  "une capote",
-  "une boite dans laquelle il y a une boite x100 où il y a une boite de thon",
-  "un tel",
-  "Le temps des tempetes de nicolas sarkozy",
-  "Le livre du prince harry",
-  "une boite de viagras",
-  "une bille de caviar",
-  "une chaussure",
-  "une bombe nucléaire mais qui explose sur 1cm cube",
-  "un slip",
-  "une cassette d'un film de cul",
-  "un cd d'undertale",
-  "Une baguette ",
-  "le lecteur qui va avec le cd et la cassette",
-  "un rouge a lèvres jaune fluo ",
-  "des écouteurs dégoutants ",
-  "un fauteuil massant pour chat",
-  "une calculatrice sans pile",
-  "une carte cadeau play store de 20 $",
-  "une image de staline",
-  "un mug avec du thé brulant",
-  "l'anneau unique",
-  "une pancarte de la personne en face de lui",
-  "du doliprane",
-  "une épée en feu",
-  "une boussole qui pointe patrick fangen",
-  "un déo et un briquet",
-  "une brosse a chiottes"
-];
+
+
 const { Player } = require("discord-player");
 require("dotenv/config");
 
@@ -121,7 +84,14 @@ client.on("messageCreate", async message => {
     await player.unpause();
   }
   if (command === "item") {
-    await message.reply(`${items[Math.random() * items.length >> 0]}`);
+    fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+        obj = JSON.parse(data); //now it an object
+        message.reply(`${obj.items[Math.random() * obj.items.length >> 0]}`);
+    }});
+    
   }
 
   //help
@@ -215,8 +185,22 @@ client.on("messageCreate", async message => {
 
   else if (command === "additem") {
     if (args[0]) {
-      items.push(args[0]);
+      let item = args.join(" ");
+      fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+        obj = JSON.parse(data); //now it an object
+        obj.items.push(item); //add some data
+        json = JSON.stringify(obj); //convert it back to json
+        fs.writeFile('items.json', json, 'utf8', function(err) {
+          if (err) throw err;
+          console.log('complete');
+          }
+        ); // write it back 
+      }});
       message.reply("Item ajouté ! C'est le chat qui va être content !");
+      
     }
   }
 });
