@@ -212,6 +212,13 @@ client.on("messageCreate", async message => {
 			await message.reply("sus :eyes:");
 		}
   }
+
+  else if (command === "additem") {
+    if (args[0]) {
+      items.push(args[0]);
+      message.reply("Item ajouté ! C'est le chat qui va être content !");
+    }
+  }
 });
 
 client.login(process.env.token)
