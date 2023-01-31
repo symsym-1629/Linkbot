@@ -27,6 +27,8 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-binaries": "^3.2.2-3",
     "ffmpeg-static": "^4.4.1",
+    "fs": "^0.0.1-security",
+    "node-localstorage": "^2.2.1",
     "opusscript": "^0.0.8",
     "tweetnacl": "^1.0.3",
     "youtube-sr": "^4.3.4",
