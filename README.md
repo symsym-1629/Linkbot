@@ -1,2 +1,2 @@
 # Linkbot
-Repo officiel du linkbot (pour tutur)
+Repo officiel du linkbot (pour tutur).
