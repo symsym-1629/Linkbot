@@ -3,6 +3,8 @@ const Discord = require("discord.js");
 const { createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const fs = require("fs");
+const axios = require('axios');
+const FormData = require('form-data');
 const myIntents = new Discord.IntentsBitField();
 myIntents.add(
   Discord.IntentsBitField.Flags.Guilds, 
@@ -71,6 +73,7 @@ client.on(Discord.Events.InteractionCreate, interaction => {
 
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
+  if (!message.content.startsWith(prefix)) return;
   //initialisation des args
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
@@ -81,7 +84,7 @@ client.on("messageCreate", async message => {
     await message.reply({embeds: [embedt]});
   }
   if (command === "unpause") {
-    await player.unpause();
+    player.unpause();
   }
   if (command === "item") {
     fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
@@ -203,6 +206,26 @@ client.on("messageCreate", async message => {
       
     }
   }
+  else if (command === "removebg") {
+    if (message.attachments.size > 0) {
+      const attachment = message.attachments.first();
+      const url = attachment.url;
+      let bg = await makeRequest(url);
+      let buffer = Buffer.from(bg, 'base64');
+      message.reply({content: "voilà l'image mon reuf", files: [buffer]});
+      return;
+    }
+    else {
+      message.reply("Faut ptet mettre une image en pièce jointe");
+    }
+  }
 });
+
+async function makeRequest(url) {
+  const formData = new FormData();
+  formData.append('image_url', url);
+  let res = await axios.post('https://api.baseline.is/v1/background-remover/', formData, {headers: {'Authorization': `Token ${process.env.removebg}`} })
+  return res.data.content;
+}
 
 client.login(process.env.token)
