@@ -2,3 +2,4 @@
 dep.js
 .idea/**
 items.json
+node_modules/
