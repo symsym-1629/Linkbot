@@ -21,6 +21,7 @@ const prefix = ";"
 
 
 const { Player } = require("discord-player");
+const { waitForDebugger } = require("inspector");
 require("dotenv/config");
 
 const embedt = new Discord.EmbedBuilder()
@@ -31,8 +32,8 @@ const embedt = new Discord.EmbedBuilder()
 const embedh = new Discord.EmbedBuilder()
     .setColor("#00F5FF")
     .setTitle("**Commandes du Linkbot**")
-    .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] : permet de supprimer autant de messages que le nombre indiqué \n \n -`de plus certaines commandes sont en cours de dev...`");
-
+    .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] (utilisateur) : permet de supprimer autant de messages que le nombre indiqué en fonction de l'utilisateur indiqué (si vous en avez désigné un.) \n \n - ;removebg [image]: permet de retirer le \"blanc\" (contour) d'une image, celle qui est envoyée en pièce jointe.\n - ;play [chanson]: permet de jouer de la musique, celle que vous avez indiqué (spoiler : si vous êtes dans un salon vocal ça marche mieux)")
+    .setFooter("de plus certaines commandes sont en cours de dev...");
 const rowPlay = new Discord.ActionRowBuilder()
     .addComponents(
         new Discord.ButtonBuilder()
@@ -167,23 +168,30 @@ client.on("messageCreate", async message => {
   
   //clear
   else if (command === "clear") {
-    let nbr = args[0];
-       
-    if (message.member.permissions.has(Discord.PermissionsBitField.Flags.ManageMessages)) {
-      if (nbr) {
-        await message.channel.bulkDelete(parseInt(nbr) + 1, true);
-        const guild = client.guilds.cache.get("1008659270251843684");
-        if (guild) {
-          guild.channels.cache.get("1018477605780979802").send(`deleted ${nbr} messages in ${message.channel.name}.`);
-        }
-      }
-      else {
-        await message.reply("Bruh faudrait ptet un nombre");
-      }
-		}
-		else {
-			await message.reply("sus :eyes:");
-		}
+    Discord.Collection.prototype.array = function() {
+      return [...this.values()]
+    }
+    if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('Sale délinquant'); // check if user has permission to manage messages
+
+    const user = message.mentions.users.first();
+    if (!user) {
+      let amount = parseInt(args[0]);
+      if (!amount) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+      message.channel.bulkDelete(amount);
+      message.channel.send(`Deleted ${args[0]} messages.`); // delete specified amount of messages
+      deleteMessageDelayed(message);
+      return;
+    }
+
+    const amount = parseInt(args[0]) ? parseInt(args[0])+1 : parseInt(args[1])+1; // get amount of messages to delete
+    if (isNaN(amount) || amount < 1 || amount > 100) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+
+    const messages = await message.channel.messages.fetch({ limit: 100 });
+    const userMessages = messages.filter(m => m.author.id === user.id).array().slice(0, amount);
+
+    await message.channel.bulkDelete(userMessages);
+    message.channel.send(`Deleted ${userMessages.length} messages from ${user.username}.`);
+    deleteMessageDelayed(message);
   }
 
   else if (command === "additem") {
@@ -219,7 +227,53 @@ client.on("messageCreate", async message => {
       message.reply("Faut ptet mettre une image en pièce jointe");
     }
   }
+  else if (command === "eval") {
+    if (message.author.id !== "704574286869823538") return;
+    try {
+      // Evaluate (execute) our input
+      const evaled = eval(args.join(" "));
+
+      // Put our eval result through the function
+      // we defined above
+      const cleaned = await clean(client, evaled);
+
+      // Reply in the channel with our result
+      message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+    } catch (err) {
+      // Reply in the channel with our error
+      message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
+    }
+  }
 });
+function deleteMessageDelayed(message) {
+  setTimeout(DeleteMessage, 2000);
+  function DeleteMessage() {
+    message.channel.bulkDelete(1);
+  }
+  return;
+}
+
+const clean = async (client, text) => {
+  // If our input is a promise, await it before continuing
+  if (text && text.constructor.name == "Promise")
+    text = await text;
+  
+  // If the response isn't a string, `util.inspect()`
+  // is used to 'stringify' the code in a safe way that
+  // won't error out on objects with circular references
+  // (like Collections, for example)
+  if (typeof text !== "string")
+    text = require("util").inspect(text, { depth: 1 });
+  
+  // Replace symbols with character code alternatives
+  text = text
+    .replace(/`/g, "`" + String.fromCharCode(8203))
+    .replace(/@/g, "@" + String.fromCharCode(8203))
+    .replaceAll(client.token, "[REDACTED]");
+  
+  // Send off the cleaned up result
+  return text;
+  }
 
 async function makeRequest(url) {
   const formData = new FormData();
