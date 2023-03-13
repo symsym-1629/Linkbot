@@ -228,19 +228,20 @@ client.on("messageCreate", async message => {
   }
   else if (command === "eval") {
     if (message.author.id !== "704574286869823538") return;
+    let cleaned;
     try {
       // Evaluate (execute) our input
       const evaled = eval(args.join(" "));
 
       // Put our eval result through the function
       // we defined above
-      const cleaned = await clean(client, evaled);
+      cleaned = await clean(client, evaled);
 
       // Reply in the channel with our result
       message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
     } catch (err) {
       // Reply in the channel with our error
-      message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
+      message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
     }
   }
 });
