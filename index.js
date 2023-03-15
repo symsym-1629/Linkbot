@@ -165,24 +165,24 @@ client.on("messageCreate", async message => {
   }
   
   //clear
-  else if (command === "clear") {
+  else if (command === "cleartest") {
     Discord.Collection.prototype.array = function() {
       return [...this.values()]
     }
     if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('Sale délinquant'); // check if user has permission to manage messages
-
+    let amount = parseInt(args[0]);
+    await message.delete();
     const user = message.mentions.users.first();
     if (!user) {
-      let amount = parseInt(args[0]);
-      if (!amount) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
-      message.channel.bulkDelete(amount);
+      if (!amount) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+      await message.channel.bulkDelete(amount);
       message.channel.send(`Deleted ${args[0]} messages.`); // delete specified amount of messages
       deleteMessageDelayed(message);
       return;
     }
 
-    const amount = parseInt(args[0]) ? parseInt(args[0])+1 : parseInt(args[1])+1; // get amount of messages to delete
-    if (isNaN(amount) || amount < 1 || amount > 100) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+     // get amount of messages to delete
+    if (isNaN(amount) || amount < 1 || amount > 100) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
 
     const messages = await message.channel.messages.fetch({ limit: 100 });
     const userMessages = messages.filter(m => m.author.id === user.id).array().slice(0, amount);
