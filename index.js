@@ -148,7 +148,7 @@ client.on("messageCreate", async message => {
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
       selfDeaf: false,
-      selfMute: false,
+      selfMute: false
     });
     const query = ytdl(song.tracks[0].url, { filter: 'audioonly' });
     const resource = createAudioResource(query);
@@ -157,12 +157,11 @@ client.on("messageCreate", async message => {
     client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
     await message.reply({content: "C'est parti !", components: [rowPlay]});
 
-    player.on(AudioPlayerStatus.Idle, () => {
+    player.on(AudioPlayerStatus.Idle, () => {      
       player.stop();
       connection.destroy();
       client.user.setActivity();
     });
-    
   }
   
   //clear
