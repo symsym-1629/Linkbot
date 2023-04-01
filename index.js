@@ -32,7 +32,7 @@ const embedt = new Discord.EmbedBuilder()
 const embedh = new Discord.EmbedBuilder()
     .setColor("#00F5FF")
     .setTitle("**Commandes du Linkbot**")
-    .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] (utilisateur) : permet de supprimer autant de messages que le nombre indiqué en fonction de l'utilisateur indiqué (si vous en avez désigné un.) \n \n - ;removebg [image]: permet de retirer le \"blanc\" (contour) d'une image, celle qui est envoyée en pièce jointe.\n - ;play [chanson]: permet de jouer de la musique, celle que vous avez indiqué (spoiler : si vous êtes dans un salon vocal ça marche mieux) \n `de plus certaines commandes sont en cours de dev...`")
+    .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] (utilisateur) : permet de supprimer autant de messages que le nombre indiqué en fonction de l'utilisateur indiqué (si vous en avez désigné un.) \n - ;removebg [image]: permet de retirer le \"blanc\" (contour) d'une image, celle qui est envoyée en pièce jointe.\n - ;play [chanson]: permet de jouer de la musique, celle que vous avez indiqué (spoiler : si vous êtes dans un salon vocal ça marche mieux) \n `de plus certaines commandes sont en cours de dev...`")
 const rowPlay = new Discord.ActionRowBuilder()
     .addComponents(
         new Discord.ButtonBuilder()
@@ -148,7 +148,7 @@ client.on("messageCreate", async message => {
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
       selfDeaf: false,
-      selfMute: false,
+      selfMute: false
     });
     const query = ytdl(song.tracks[0].url, { filter: 'audioonly' });
     const resource = createAudioResource(query);
@@ -157,33 +157,32 @@ client.on("messageCreate", async message => {
     client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
     await message.reply({content: "C'est parti !", components: [rowPlay]});
 
-    player.on(AudioPlayerStatus.Idle, () => {
+    player.on(AudioPlayerStatus.Idle, () => {      
       player.stop();
       connection.destroy();
       client.user.setActivity();
     });
-    
   }
   
   //clear
-  else if (command === "clear") {
+  else if (command === "cleartest") {
     Discord.Collection.prototype.array = function() {
       return [...this.values()]
     }
     if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('Sale délinquant'); // check if user has permission to manage messages
-
+    let amount = parseInt(args[0]);
+    await message.delete();
     const user = message.mentions.users.first();
     if (!user) {
-      let amount = parseInt(args[0]);
-      if (!amount) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
-      message.channel.bulkDelete(amount);
+      if (!amount) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+      await message.channel.bulkDelete(amount);
       message.channel.send(`Deleted ${args[0]} messages.`); // delete specified amount of messages
       deleteMessageDelayed(message);
       return;
     }
 
-    const amount = parseInt(args[0]) ? parseInt(args[0])+1 : parseInt(args[1])+1; // get amount of messages to delete
-    if (isNaN(amount) || amount < 1 || amount > 100) return message.reply('Faut un montant entre 1 et 100 mec'); // check if amount is valid
+     // get amount of messages to delete
+    if (isNaN(amount) || amount < 1 || amount > 100) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
 
     const messages = await message.channel.messages.fetch({ limit: 100 });
     const userMessages = messages.filter(m => m.author.id === user.id).array().slice(0, amount);
@@ -228,19 +227,20 @@ client.on("messageCreate", async message => {
   }
   else if (command === "eval") {
     if (message.author.id !== "704574286869823538") return;
+    let cleaned;
     try {
       // Evaluate (execute) our input
       const evaled = eval(args.join(" "));
 
       // Put our eval result through the function
       // we defined above
-      const cleaned = await clean(client, evaled);
+      cleaned = await clean(client, evaled);
 
       // Reply in the channel with our result
       message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
     } catch (err) {
       // Reply in the channel with our error
-      message.channel.send(`\`ERROR\` \`\`\`xl\n${cleaned}\n\`\`\``);
+      message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
     }
   }
 });

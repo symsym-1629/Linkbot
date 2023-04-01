@@ -35,5 +35,13 @@
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.2"
   },
-  "homepage": "https://github.com/symsym-1629/Linkbot#readme"
+  "homepage": "https://github.com/symsym-1629/Linkbot#readme",
+  "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1"
+  }
 }
