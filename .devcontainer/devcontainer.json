@@ -9,7 +9,6 @@
 		"ghcr.io/devcontainers/features/nix:1": {},
 		"ghcr.io/devcontainers/features/sshd:1": {},
 		"ghcr.io/warrenbuckley/codespace-features/sqlite:1": {},
-		"ghcr.io/devcontainers-contrib/features/ffmpeg-homebrew:1": {},
 		"ghcr.io/devcontainers/features/desktop-lite:1": {}
 	},
 
