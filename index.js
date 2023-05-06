@@ -165,7 +165,7 @@ client.on("messageCreate", async message => {
   }
   
   //clear
-  else if (command === "cleartest") {
+  else if (command === "clear") {
     Discord.Collection.prototype.array = function() {
       return [...this.values()]
     }
