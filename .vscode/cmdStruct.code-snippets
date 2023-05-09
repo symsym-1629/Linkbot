@@ -19,10 +19,32 @@
 			"\t\t.setDescription('${2:description}'),",
 
 			"\tasync execute(interaction) {",
-			"\t\tawait interaction.reply({content:`${3:message envoyé}`});",
+			"\t\tawait interaction.reply({content:`${3:réponse}`});",
 			"\t},",
 			"};"
 		],
-		"description": "Log output to console"
-	}
+		"description": "Crée la structure du fichier d'une commande"
+	},
+	"stringOption": {
+		"scope": "javascript,typescript",
+		"prefix": "&stropt",
+		"body": [
+			".addStringOption(option => option",
+			"\t.setName('${1:option}')",
+			"\t.setDescription('${2:description}'))",
+			"\t.setRequired(${3:true/false})"
+		],
+		"description": "Crée la structure d'une option de type string"
+	},
+	"userOption": {
+		"scope": "javascript,typescript",
+		"prefix": "&usropt",
+		"body": [
+			".addUserOption(option => option",
+			"\t.setName('${1:option}')",
+			"\t.setDescription('${2:description}'))",
+			"\t.setRequired(${3:true/false})"
+		],
+		"description": "Crée la structure d'une option de type user"
+	},
 }

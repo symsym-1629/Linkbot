@@ -21,10 +21,10 @@ const client = new Discord.Client({
 const prefix = ";"
 
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands' && './commands/JJ_commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(`./commands/${file}` && `./commands/JJ_commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
@@ -93,15 +93,9 @@ client.on("messageCreate", async message => {
   //initialisation des args
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
+
   //Commandes
 
-  //test
-  if (command === "test") {
-    await message.reply({embeds: [embedt]});
-  }
-  if (command === "unpause") {
-    player.unpause();
-  }
   if (command === "item") {
     fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
       if (err){
@@ -178,34 +172,6 @@ client.on("messageCreate", async message => {
       connection.destroy();
       client.user.setActivity();
     });
-  }
-  
-  //clear
-  else if (command === "clear") {
-    Discord.Collection.prototype.array = function() {
-      return [...this.values()]
-    }
-    if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('Sale délinquant'); // check if user has permission to manage messages
-    let amount = parseInt(args[0]);
-    await message.delete();
-    const user = message.mentions.users.first();
-    if (!user) {
-      if (!amount) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
-      await message.channel.bulkDelete(amount);
-      message.channel.send(`Deleted ${args[0]} messages.`); // delete specified amount of messages
-      deleteMessageDelayed(message);
-      return;
-    }
-
-     // get amount of messages to delete
-    if (isNaN(amount) || amount < 1 || amount > 100) return message.channel.send('Faut un montant entre 1 et 100 mec'); // check if amount is valid
-
-    const messages = await message.channel.messages.fetch({ limit: 100 });
-    const userMessages = messages.filter(m => m.author.id === user.id).array().slice(0, amount);
-
-    await message.channel.bulkDelete(userMessages);
-    message.channel.send(`Deleted ${userMessages.length} messages from ${user.username}.`);
-    deleteMessageDelayed(message);
   }
 
   else if (command === "additem") {
