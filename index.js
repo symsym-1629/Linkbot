@@ -1,10 +1,7 @@
 //Discord
 const Discord = require("discord.js");
-const { createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
+const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
-const axios = require('axios');
-const FormData = require('form-data');
 const myIntents = new Discord.IntentsBitField();
 myIntents.add(
   Discord.IntentsBitField.Flags.Guilds, 
@@ -21,31 +18,25 @@ const client = new Discord.Client({
 const prefix = ";"
 
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands' && './commands/JJ_commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}` && `./commands/JJ_commands/${file}`);
+	const command = require(`./commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
 }
 
-const { Player } = require("discord-player");
-const { waitForDebugger } = require("inspector");
+const JJcommandFiles = fs.readdirSync('./commands/JJ_commands').filter(file => file.endsWith('.js'));
+
+for (const file of JJcommandFiles) {
+	const command = require(`./commands/JJ_commands/${file}`);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.commands.set(command.data.name, command);
+}
+
 require("dotenv/config");
-
-const embedh = new Discord.EmbedBuilder()
-    .setColor("#00F5FF")
-    .setTitle("**Commandes du Linkbot**")
-    .setDescription("**- Le prefix du bot est ;** \n - ; test : le bot vous répond pour dire qu'il fonctionne \n - ; help : affiche toutes les commandes du bot \n - ; punchline : le bot vous renvoie une punchline gratuite pour le plaisir. Il sera possible de cibler un utilisateur dans le futur (`une punchline disponible pour le moment`) \n - ;clear [nombre] (utilisateur) : permet de supprimer autant de messages que le nombre indiqué en fonction de l'utilisateur indiqué (si vous en avez désigné un.) \n - ;removebg [image]: permet de retirer le \"blanc\" (contour) d'une image, celle qui est envoyée en pièce jointe.\n - ;play [chanson]: permet de jouer de la musique, celle que vous avez indiqué (spoiler : si vous êtes dans un salon vocal ça marche mieux) \n `de plus certaines commandes sont en cours de dev...`")
-
-const rowPlay = new Discord.ActionRowBuilder()
-    .addComponents(
-        new Discord.ButtonBuilder()
-            .setCustomId('playButton')
-            .setEmoji('⏯')
-            .setStyle(Discord.ButtonStyle.Primary),
-    );
 
 client.once("ready", () => {
   console.log("Linkbot est en ligne, tout roule");
@@ -54,8 +45,9 @@ client.once("ready", () => {
 client.on("error", console.error);
 client.on("warn", console.warn);
 
-const finder = new Player(client);
 const player = createAudioPlayer()
+
+module.exports = {player : player, client : client};
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
   console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
@@ -74,6 +66,11 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       else {
         interaction.reply({content: "Bruh je suis pas en voc tu sais ?", ephemeral: true});
       }
+    }
+    else if (interaction.customId === "stopButton") {
+      player.stop();
+      client.user.setActivity();
+      interaction.reply({content: "Arrêté !", ephemeral: true});
     }
   }
   if (!interaction.isCommand()) return;
@@ -94,117 +91,24 @@ client.on("messageCreate", async message => {
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
-  //Commandes
-
-  if (command === "item") {
-    fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
-      if (err){
-          console.log(err);
-      } else {
-        obj = JSON.parse(data); //now it an object
-        message.reply(`${obj.items[Math.random() * obj.items.length >> 0]}`);
-    }});
-    
+  if (command === 'test') {
+    message.reply("ça marche");
   }
-
-  //help
-  else if (command === "help") {
-    await message.reply({embeds: [embedh]});
-  }
-
-  //commande en dev
-  else if (command === "jojo") {
-    await message.reply("commande en cours de dev, cheh \nD'ailleurs un peu gay en vrai le manga");
-  }
-
-  //commande troll
-  else if (command === "punchline") {
-    let punchline = [
-      "Tg salarabe la commande est en cours de dev retourne jouer à ta nintendaucshwitz",
-      "Autre réplique",
-      "etc..."
-    ];
-    await message.reply(`${punchline[Math.random() * punchline.length >> 0]}`);
-  }
-  //commande musique
-  else if (command === "play") {
-    const channel = message.member?.voice?.channel;
-    
-
-    if (!channel)
-      return message.reply("Faudrait ptet rejoindre un voc d'abord");
-    
-    else {
-      if (!channel.viewable)
-        return message.reply("Avec la perm de voir le salon ?");
-      if (!channel.joinable)
-        return message.reply("Avec la perm de me connecter au salon ?");
-      if (!channel.speakable)
-        return message.reply("Avec la perm de parler dans le salon ?");
-      if (channel.full)
-        return message.reply("Vous pourriez au moins me faire une place...");
-    }
-
-    if (!args[0])
-      return message.reply("avec un truc a rechercher stp"); 
-    
-    let request = args.join(" ");
-
-    const song = await finder.search(request, {
-      requestedBy: message.author
-    });
-    const connection = joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator,
-      selfDeaf: false,
-      selfMute: false
-    });
-    const query = ytdl(song.tracks[0].url, { filter: 'audioonly' });
-    const resource = createAudioResource(query);
-    connection.subscribe(player);
-    player.play(resource);
-    client.user.setActivity(`${song.tracks[0].title}`, { type: Discord.ActivityType.Listening });
-    await message.reply({content: "C'est parti !", components: [rowPlay]});
-
-    player.on(AudioPlayerStatus.Idle, () => {      
-      player.stop();
-      connection.destroy();
-      client.user.setActivity();
-    });
-  }
-
+  
   else if (command === "additem") {
     if (args[0]) {
       let item = args.join(" ");
       fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
-        if (err){
-            console.log(err);
-        } else {
+        err ? console.log(err) : console.log("fichier lu"); {
         obj = JSON.parse(data); //now it an object
         obj.items.push(item); //add some data
         json = JSON.stringify(obj); //convert it back to json
         fs.writeFile('items.json', json, 'utf8', function(err) {
-          if (err) throw err;
-          console.log('complete');
-          }
-        ); // write it back 
+          err ? console.log(err) : console.log("fichier écrit"); // write it back 
+        }); // write it back 
       }});
       message.reply("Item ajouté ! C'est le chat qui va être content !");
       
-    }
-  }
-  else if (command === "removebg") {
-    if (message.attachments.size > 0) {
-      const attachment = message.attachments.first();
-      const url = attachment.url;
-      let bg = await makeRequest(url);
-      let buffer = Buffer.from(bg, 'base64');
-      message.reply({content: "voilà l'image mon reuf", files: [buffer]});
-      return;
-    }
-    else {
-      message.reply("Faut ptet mettre une image en pièce jointe");
     }
   }
   else if (command === "eval") {
@@ -226,14 +130,6 @@ client.on("messageCreate", async message => {
     }
   }
 });
-function deleteMessageDelayed(message) {
-  setTimeout(DeleteMessage, 2000);
-  function DeleteMessage() {
-    message.channel.bulkDelete(1);
-  }
-  return;
-}
-
 const clean = async (client, text) => {
   // If our input is a promise, await it before continuing
   if (text && text.constructor.name == "Promise")
@@ -254,13 +150,6 @@ const clean = async (client, text) => {
   
   // Send off the cleaned up result
   return text;
-}
-
-async function makeRequest(url) {
-  const formData = new FormData();
-  formData.append('image_url', url);
-  let res = await axios.post('https://api.baseline.is/v1/background-remover/', formData, {headers: {'Authorization': `Token ${process.env.removebg}`} })
-  return res.data.content;
 }
 
 client.login(process.env.token)
