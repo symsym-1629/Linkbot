@@ -11,6 +11,19 @@ myIntents.add(
   Discord.IntentsBitField.Flags.MessageContent, 
   Discord.IntentsBitField.Flags.GuildVoiceStates
 );
+
+const express = require('express');
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Bot Is Ready')
+});
+
+app.listen(3000, () => {
+  console.log('server started');
+});
+
 const client = new Discord.Client({
   intents: myIntents
 });
