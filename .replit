@@ -1,4 +1,5 @@
 entrypoint = "index.js"
+hidden = [".config", "package-lock.json"]
 
 [interpreter]
 command = [
@@ -14,6 +15,8 @@ channel = "stable-21_11"
 
 [env]
 XDG_CONFIG_HOME = "/home/runner/.config"
+PATH = "$REPL_HOME/.config/npm/node_global/bin:$REPL_HOME/node_modules/.bin"
+npm_config_prefix = "$REPL_HOME/.config/npm/node_global"
 
 [packager]
 language = "nodejs"
@@ -71,3 +74,13 @@ support = true
       sourceMaps = true
       stopOnEntry = false
       type = "pwa-node"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", ".config", "package.json", "package-lock.json"]
+
+[[hints]]
+regex = 'Error \[ERR_REQUIRE_ESM\]'
+message = "We see that you are using require(...) inside your code. We currently do not support this syntax. Please use 'import' instead when using external modules. (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)"
+
+[deployment]
+run = ["sh", "-c", "node index.js"]
