@@ -2,27 +2,10 @@
 const Discord = require("discord.js");
 const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
+const { Sequelize } = require('sequelize');
+require("dotenv/config");
 const myIntents = new Discord.IntentsBitField();
-myIntents.add(
-  Discord.IntentsBitField.Flags.Guilds, 
-  Discord.IntentsBitField.Flags.GuildMessages,
-  Discord.IntentsBitField.Flags.GuildMembers, 
-  Discord.IntentsBitField.Flags.GuildPresences,
-  Discord.IntentsBitField.Flags.MessageContent, 
-  Discord.IntentsBitField.Flags.GuildVoiceStates
-);
-
-const express = require('express');
-
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Bot Is Ready')
-});
-
-app.listen(3000, () => {
-  console.log('server started');
-});
+myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
 
 const client = new Discord.Client({
   intents: myIntents
@@ -49,10 +32,43 @@ for (const file of JJcommandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-require("dotenv/config");
+const database = new Sequelize(process.env.SQL_URI);
+var persos = database.define('persos', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    unique: true,
+  },
+  ficheurl: Sequelize.STRING,
+  rotationlevel: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  hamonlevel: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  vampirismelevel: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  race: Sequelize.STRING,
+  userid: Sequelize.BIGINT
+});
+database.sync();
 
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log("Linkbot est en ligne, tout roule");
+  try {
+    await database.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 });
 
 client.on("error", console.error);
