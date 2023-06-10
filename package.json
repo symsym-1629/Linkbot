@@ -32,6 +32,9 @@
     "fs": "^0.0.1-security",
     "node-localstorage": "^2.2.1",
     "opusscript": "^0.0.8",
+    "sequelize": "^6.32.0",
+    "sqlite": "^4.2.1",
+    "sqlite3": "^5.1.6",
     "tweetnacl": "^1.0.3",
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.4"
