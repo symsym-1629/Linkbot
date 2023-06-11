@@ -2,11 +2,13 @@
 const Discord = require("discord.js");
 const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
-const { Sequelize } = require('sequelize');
-require("dotenv/config");
+const Perso = require("./database/models/Perso.js");
+const Item = require("./database/models/Item.js");
+const database = require("./database/init.js");
 const myIntents = new Discord.IntentsBitField();
-myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
+require("dotenv/config");
 
+myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
 const client = new Discord.Client({
   intents: myIntents
 });
@@ -32,38 +34,11 @@ for (const file of JJcommandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-const database = new Sequelize(process.env.SQL_URI);
-var persos = database.define('persos', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  name: {
-    type: Sequelize.STRING,
-    unique: true,
-  },
-  ficheurl: Sequelize.STRING,
-  rotationlevel: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  hamonlevel: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  vampirismelevel: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  race: Sequelize.STRING,
-  userid: Sequelize.BIGINT
-});
-database.sync();
-
 client.once("ready", async () => {
   console.log("Linkbot est en ligne, tout roule");
   try {
+    await Perso.sync();
+    await Item.sync();
     await database.authenticate();
     console.log('Connection has been established successfully.');
   } catch (error) {
