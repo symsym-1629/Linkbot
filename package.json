@@ -11,7 +11,7 @@
     "url": "git+https://github.com/symsym-1629/Linkbot.git"
   },
   "keywords": [
-    "link"
+    "JoJo"
   ],
   "author": "Link, symsym",
   "license": "MIT",
@@ -33,7 +33,6 @@
     "node-localstorage": "^2.2.1",
     "opusscript": "^0.0.8",
     "sequelize": "^6.32.0",
-    "sqlite": "^4.2.1",
     "sqlite3": "^5.1.6",
     "tweetnacl": "^1.0.3",
     "youtube-sr": "^4.3.4",
