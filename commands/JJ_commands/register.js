@@ -83,7 +83,7 @@ module.exports = {
         const image = interaction.options.getAttachment('image');
         const user = interaction.options.getUser('user');
 
-        if (!interaction.member.roles.cache.has('1008659270549651474')) return interaction.reply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
+        if (!interaction.member.roles.cache.has('1008659270549651474')) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
         try {
         const perso = await Perso.create({
             name: name,
