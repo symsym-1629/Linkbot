@@ -116,21 +116,35 @@ client.on("messageCreate", async message => {
     }
   }
   else if (command === "eval") {
+    message.delete();
     if (message.author.id !== "704574286869823538") return;
+    let returned = args.shift.toLowerCase();
     let cleaned;
-    try {
-      // Evaluate (execute) our input
-      const evaled = eval(args.join(" "));
+    if (returned == "true") {
+      try {
+        // Evaluate (execute) our input
+        const evaled = eval(args.join(" "));
 
-      // Put our eval result through the function
-      // we defined above
-      cleaned = await clean(client, evaled);
+        // Put our eval result through the function
+        // we defined above
+        cleaned = await clean(client, evaled);
 
-      // Reply in the channel with our result
-      message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
-    } catch (err) {
-      // Reply in the channel with our error
-      message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+        // Reply in the channel with our result
+        message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+      } catch (err) {
+        // Reply in the channel with our error
+        message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+      }
+    } if (returned == "false") {
+      try {
+        // Evaluate (execute) our input
+        eval(args.join(" "));
+      } catch (err) {
+        // Reply in the channel with our error
+        message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+      }
+    } else {
+      message.channel.send("Il manque le returned true/false");
     }
   }
 });
