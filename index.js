@@ -117,8 +117,8 @@ client.on("messageCreate", async message => {
   }
   else if (command === "eval") {
     message.delete();
-    if (message.author.id !== "704574286869823538") return;
-    let returned = args.shift.toLowerCase();
+    if (message.author.id !== "922457431940935691") return;
+    let returned = args.shift().toLowerCase();
     let cleaned;
     if (returned == "true") {
       try {
@@ -131,6 +131,7 @@ client.on("messageCreate", async message => {
 
         // Reply in the channel with our result
         message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+        return;
       } catch (err) {
         // Reply in the channel with our error
         message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
@@ -139,6 +140,7 @@ client.on("messageCreate", async message => {
       try {
         // Evaluate (execute) our input
         eval(args.join(" "));
+        return;
       } catch (err) {
         // Reply in the channel with our error
         message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
