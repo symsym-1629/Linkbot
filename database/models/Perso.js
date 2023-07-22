@@ -12,6 +12,7 @@ var Perso = database.define('persos', {
     unique: true,
   },
   race: Sequelize.STRING,
+  affiliation: Sequelize.STRING,
   rotationlevel: {
     type: Sequelize.INTEGER,
     allowNull: true
@@ -24,9 +25,19 @@ var Perso = database.define('persos', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
+  cplevel: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   ficheurl: Sequelize.STRING,
-  hasoverheaven: Sequelize.BOOLEAN,
-  hasrequiem: Sequelize.BOOLEAN,
+  hasoverheaven: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
+  hasrequiem: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
   standname: {
     type: Sequelize.STRING,
     allowNull: true

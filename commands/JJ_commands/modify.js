@@ -21,8 +21,18 @@ module.exports = {
             )
         )
         .addUserOption(option => option
-            .setName('user')
-            .setDescription('a qui appartient le perso ?')
+        .setName('user')
+        .setDescription('a qui appartient le perso ?')
+        )
+        .addStringOption(option => option
+            .setName('standname')
+            .setDescription('Nom du stand')
+            .setRequired(false)
+        )
+        .addStringOption(option => option
+            .setName('stats')
+            .setDescription('Stats du stand séparées par des tirets (ex: A-B-C-B-B-S)')
+            .setRequired(false)
         )
         .addBooleanOption(option => option
             .setName('hasoverheaven')
@@ -31,6 +41,10 @@ module.exports = {
         .addBooleanOption(option => option
             .setName('hasrequiem')
             .setDescription('Le stand a-t-il un requiem ?')
+        )
+        .addIntegerOption(option => option
+            .setName('cplevel')
+            .setDescription('Niveau de maitrise du chaos / paix')
         )
         .addIntegerOption(option => option
             .setName('hamonlevel')
@@ -49,8 +63,11 @@ module.exports = {
         const id = interaction.options.getInteger('id');
         const race = interaction.options.getString('race');
         const user = interaction.options.getUser('user');
+        const standname = interaction.options.getString('standname');
+        const stats = interaction.options.getString('standname');
         const hasoverheaven = interaction.options.getBoolean('hasoverheaven');
         const hasrequiem = interaction.options.getBoolean('hasrequiem');
+        const cplevel = interaction.options.getInteger('cplevel');
         const hamonlevel = interaction.options.getInteger('hamonlevel');
         const vampirismelevel = interaction.options.getInteger('vampirismelevel');
         const rotationlevel = interaction.options.getInteger('rotationlevel');
@@ -59,7 +76,7 @@ module.exports = {
 
         const perso = await Perso.findOne({ where: {id: id} });
         if (!perso) return interaction.editReply({ content: `Ce perso n'existe pas`});
-        if (!race && !user && !hasoverheaven && !hasrequiem && !hamonlevel && !vampirismelevel && rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
+        if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
          
         if (race) {
             await perso.update({race : race}) 
@@ -69,9 +86,25 @@ module.exports = {
             await perso.update({userid : user.id}) 
             interaction.editReply({ content: `user modifiée`});
         };
+        if (standname) {
+            await perso.update({standname : standname}) 
+            interaction.editReply({ content: `nom du stand modifié`});
+        };
+        if (stats) {
+            await perso.update({standstats : stats}) 
+            interaction.editReply({ content: `stats modifiées`});
+        };
         if (hasrequiem) {
             await perso.update({hasrequiem : hasrequiem}) 
             interaction.editReply({ content: `hasrequiem modifiée`});
+        };
+        if (hasoverheaven) {
+            await perso.update({hasoverheaven : hasoverheaven})
+            interaction.editReply({ content: `hasoverheaven modifiée`});
+        };
+        if (cplevel) {
+            await perso.update({cplevel : cplevel})
+            interaction.editReply({ content: `cplevel modifiée`});
         };
         if (hamonlevel) {
             await perso.update({hamonlevel : hamonlevel}) 

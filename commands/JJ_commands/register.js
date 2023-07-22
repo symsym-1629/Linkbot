@@ -22,23 +22,19 @@ module.exports = {
             )
         )
         .addStringOption(option => option
+            .setName('affiliation')
+            .setDescription('Affiliation du personnage')
+            .setRequired(true)
+            .addChoices(
+                { name: 'Chaos', value: 'chaos' },
+                { name: 'Paix', value: 'paix' },
+                { name: 'Neutre', value: 'neutre' },
+                { name: 'Autre', value: 'autre' },
+            )
+        )
+        .addStringOption(option => option
             .setName('url')
             .setDescription('Lien vers la fiche du personnage')
-            .setRequired(true)
-        )
-        .addStringOption(option => option
-            .setName('standname')
-            .setDescription('Nom du stand')
-            .setRequired(true)
-        )
-        .addStringOption(option => option
-            .setName('stats')
-            .setDescription('Stats du stand séparées par des tirets (ex: A-B-C-B-B-S)')
-            .setRequired(true)
-        )
-        .addBooleanOption(option => option
-            .setName('hasoverheaven')
-            .setDescription('Le stand a-t-il un over heaven ?')
             .setRequired(true)
         )
         .addUserOption(option => option
@@ -46,14 +42,37 @@ module.exports = {
             .setDescription('a qui appartient le perso ?')
             .setRequired(true)
         )
+        .addStringOption(option => option
+            .setName('standname')
+            .setDescription('Nom du stand')
+            .setRequired(false)
+        )
+        .addStringOption(option => option
+            .setName('stats')
+            .setDescription('Stats du stand séparées par des tirets (ex: A-B-C-B-B-S)')
+            .setRequired(false)
+        )
+        .addBooleanOption(option => option
+            .setName('hasoverheaven')
+            .setDescription('Le stand a-t-il un over heaven ?')
+            .setRequired(false)
+        )
         .addBooleanOption(option => option
             .setName('hasrequiem')
             .setDescription('Le stand a-t-il un requiem ?')
-            .setRequired(true)
+            .setRequired(false)
+        )
+        .addIntegerOption(option => option
+            .setName('cplevel')
+            .setDescription('Niveau de maitrise du chaos / paix')
         )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
+        )
+        .addIntegerOption(option => option
+            .setName('rotationlevel')
+            .setDescription('Niveau de maitrise de la rotation')
         )
         .addIntegerOption(option => option
             .setName('vampirismelevel')
@@ -61,22 +80,20 @@ module.exports = {
         )
         .addAttachmentOption(
             option => option
-                .setName('image')
-                .setDescription('Image du personnage')
-        )
-        .addIntegerOption(option => option
-            .setName('rotationlevel')
-            .setDescription('Niveau de maitrise de la rotation')
+            .setName('image')
+            .setDescription('Image du personnage')
         ),
     async execute(interaction) {
         await interaction.deferReply();
         const name = interaction.options.getString('name');
         const race = interaction.options.getString('race');
+        const affiliation = interaction.options.getString('affiliation');
         const url = interaction.options.getString('url');
         const standName = interaction.options.getString('standname');
         const stats = interaction.options.getString('stats');
         const hasOverHeaven = interaction.options.getBoolean('hasoverheaven');
         const hasRequiem = interaction.options.getBoolean('hasrequiem');
+        const cpLevel = interaction.options.getInteger('cplevel');
         const hamonLevel = interaction.options.getInteger('hamonlevel');
         const vampirismeLevel = interaction.options.getInteger('vampirismelevel');
         const rotationLevel = interaction.options.getInteger('rotationlevel');
@@ -88,14 +105,16 @@ module.exports = {
         const perso = await Perso.create({
             name: name,
             race: race,
+            affiliation: affiliation,
+            cplevel: cpLevel ? cpLevel : null,
             rotationlevel: rotationLevel ? rotationLevel : null,
             hamonlevel: hamonLevel ? hamonLevel : null,
             vampirismelevel: vampirismeLevel ? vampirismeLevel : null,
             ficheurl: url,
-            hasoverheaven: hasOverHeaven,
-            hasrequiem: hasRequiem,
-            standname: standName,
-            standstats: stats,
+            hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
+            hasrequiem: hasRequiem ? hasRequiem : null,
+            standname: standName ? standName : null,
+            standstats: stats ? stats : null,
             imagelink: image ? image.url : null,
             userid: user.id
         });

@@ -4,7 +4,8 @@
   "description": "Linkbot est un bot de diverses choses comme la musique ou encore l'apprentissage du code (surtout ca enft)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
