@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
 const Perso = require(`../../database/models/Perso`);
+require('dotenv/config');
 module.exports = {
      data: new SlashCommandBuilder()
         .setName('modifyperso')
@@ -72,7 +73,7 @@ module.exports = {
         const vampirismelevel = interaction.options.getInteger('vampirismelevel');
         const rotationlevel = interaction.options.getInteger('rotationlevel');
 
-        if (!interaction.member.roles.cache.has('1008659270549651474')) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
+        if (!interaction.member.roles.cache.has(process.env.validatorId)) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
 
         const perso = await Perso.findOne({ where: {id: id} });
         if (!perso) return interaction.editReply({ content: `Ce perso n'existe pas`});
