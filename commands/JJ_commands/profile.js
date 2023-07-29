@@ -14,7 +14,7 @@ module.exports = {
         await interaction.deferReply()
         const user = await interaction.options.getUser('user');
         console.log(user.id)
-        const perso = await Perso.findAll({ where: {userid: user.id} });
+        const perso = await Perso.findAll({ where: {userid: user.id, dead: false} });
         if (!perso[0]) {
             return await interaction.editReply({ content: `Ce joueur n'a pas de perso enregistré`, ephemeral: true });
         };

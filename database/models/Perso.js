@@ -50,7 +50,8 @@ var Perso = database.define('persos', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  userid: Sequelize.BIGINT
+  userid: Sequelize.BIGINT,
+  dead: Sequelize.BOOLEAN
 });
 
 module.exports = Perso;

@@ -117,7 +117,8 @@ module.exports = {
             standname: standName ? standName : null,
             standstats: stats ? stats : null,
             imagelink: image ? image.url : null,
-            userid: user.id
+            userid: user.id,
+            dead: false
         });
         await interaction.editReply({content:`Le personnage ${perso.name} a bien été enregistré !`});
         } catch (error) {
