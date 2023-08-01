@@ -6,6 +6,7 @@ const Perso = require("./database/models/Perso.js");
 const Item = require("./database/models/Item.js");
 const database = require("./database/init.js");
 const myIntents = new Discord.IntentsBitField();
+const package = require("./package.json");
 require("dotenv/config");
 
 myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
@@ -38,7 +39,7 @@ client.once("ready", async () => {
   console.log("Linkbot est en ligne, tout roule");
   let guild = await client.guilds.fetch(process.env.guildId);
   let logChannel = await guild.channels.fetch(process.env.logChannelId);
-  await logChannel.send({content:`Linkbot est en ligne, tout roule`});
+  await logChannel.send({content:`Linkbot@${package.version} est en ligne, tout roule`});
   try {
     await Perso.sync();
     await Item.sync();
