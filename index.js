@@ -36,6 +36,9 @@ for (const file of JJcommandFiles) {
 
 client.once("ready", async () => {
   console.log("Linkbot est en ligne, tout roule");
+  let guild = await client.guilds.fetch(process.env.guildId);
+  let logChannel = await guild.channels.fetch(process.env.logChannelId);
+  await logChannel.send({content:`Linkbot est en ligne, tout roule`});
   try {
     await Perso.sync();
     await Item.sync();
