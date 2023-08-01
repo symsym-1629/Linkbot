@@ -1,17 +1,19 @@
 {
   "name": "linkbot",
-  "version": "2.3.0a",
+  "version": "2.4.0",
   "description": "Linkbot est un bot de diverses choses comme la musique ou encore l'apprentissage du code (surtout ca enft)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "register": "node scripts/deploy-commands.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/symsym-1629/Linkbot.git"
   },
   "keywords": [
-    "link"
+    "JoJo"
   ],
   "author": "Link, symsym",
   "license": "MIT",
@@ -32,6 +34,8 @@
     "fs": "^0.0.1-security",
     "node-localstorage": "^2.2.1",
     "opusscript": "^0.0.8",
+    "sequelize": "^6.32.0",
+    "sqlite3": "^5.1.6",
     "tweetnacl": "^1.0.3",
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.4"

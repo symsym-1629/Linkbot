@@ -15,6 +15,7 @@ module.exports = {
             .setRequired(false)
         ),
     async execute(interaction) {
+        await interaction.deferReply({ephemeral: true});
         const amount = interaction.options.getInteger('number');
         const user = interaction.options.getUser('user');
         Discord.Collection.prototype.array = function() {
@@ -24,7 +25,7 @@ module.exports = {
           if (!user) {
             if (amount>100 || amount<1) return interaction.reply({content: 'Faut un montant entre 1 et 100 mec', ephemeral: true}); // check if amount is valid
             await interaction.channel.bulkDelete(amount);
-            interaction.reply({content: `Deleted ${amount} messages.`, ephemeral: true}); // delete specified amount of messages
+            interaction.editReply({content: `Deleted ${amount} messages.`}); // delete specified amount of messages
             return;
           }
       
@@ -35,6 +36,6 @@ module.exports = {
           const userMessages = messages.filter(m => m.author.id === user.id).array().slice(0, amount);
       
           await interaction.channel.bulkDelete(userMessages);
-          interaction.reply({content: `Deleted ${userMessages.length} messages from ${user.username}.`, ephemeral: true});
+          interaction.editReply({content: `Deleted ${userMessages.length} messages from ${user.username}.`});
     },
 };

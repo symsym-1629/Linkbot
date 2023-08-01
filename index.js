@@ -2,28 +2,13 @@
 const Discord = require("discord.js");
 const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
+const Perso = require("./database/models/Perso.js");
+const Item = require("./database/models/Item.js");
+const database = require("./database/init.js");
 const myIntents = new Discord.IntentsBitField();
-myIntents.add(
-  Discord.IntentsBitField.Flags.Guilds, 
-  Discord.IntentsBitField.Flags.GuildMessages,
-  Discord.IntentsBitField.Flags.GuildMembers, 
-  Discord.IntentsBitField.Flags.GuildPresences,
-  Discord.IntentsBitField.Flags.MessageContent, 
-  Discord.IntentsBitField.Flags.GuildVoiceStates
-);
+require("dotenv/config");
 
-const express = require('express');
-
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Bot Is Ready')
-});
-
-app.listen(3000, () => {
-  console.log('server started');
-});
-
+myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
 const client = new Discord.Client({
   intents: myIntents
 });
@@ -49,10 +34,19 @@ for (const file of JJcommandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-require("dotenv/config");
-
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log("Linkbot est en ligne, tout roule");
+  let guild = await client.guilds.fetch(process.env.guildId);
+  let logChannel = await guild.channels.fetch(process.env.logChannelId);
+  await logChannel.send({content:`Linkbot est en ligne, tout roule`});
+  try {
+    await Perso.sync();
+    await Item.sync();
+    await database.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 });
 
 client.on("error", console.error);
@@ -125,21 +119,37 @@ client.on("messageCreate", async message => {
     }
   }
   else if (command === "eval") {
-    if (message.author.id !== "704574286869823538") return;
+    message.delete();
+    if (message.author.id !== "922457431940935691") return;
+    let returned = args.shift().toLowerCase();
     let cleaned;
-    try {
-      // Evaluate (execute) our input
-      const evaled = eval(args.join(" "));
+    if (returned == "true") {
+      try {
+        // Evaluate (execute) our input
+        const evaled = eval(args.join(" "));
 
-      // Put our eval result through the function
-      // we defined above
-      cleaned = await clean(client, evaled);
+        // Put our eval result through the function
+        // we defined above
+        cleaned = await clean(client, evaled);
 
-      // Reply in the channel with our result
-      message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
-    } catch (err) {
-      // Reply in the channel with our error
-      message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+        // Reply in the channel with our result
+        message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
+        return;
+      } catch (err) {
+        // Reply in the channel with our error
+        message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+      }
+    } if (returned == "false") {
+      try {
+        // Evaluate (execute) our input
+        eval(args.join(" "));
+        return;
+      } catch (err) {
+        // Reply in the channel with our error
+        message.channel.send(`\`ERROR\` \`\`\`xl\n${err}\n\`\`\``);
+      }
+    } else {
+      message.channel.send("Il manque le returned true/false");
     }
   }
 });

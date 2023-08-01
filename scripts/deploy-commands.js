@@ -5,18 +5,18 @@ const { Routes } = require('discord-api-types/v9');
 require("dotenv/config");
 
 const JJcommands = [];
-const JJcommandFiles = fs.readdirSync('./commands/JJ_commands').filter(file => file.endsWith('.js'));
+const JJcommandFiles = fs.readdirSync(`./commands/JJ_commands`).filter(file => file.endsWith('.js'));
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(`../commands/${file}`);
 	commands.push(command.data.toJSON());
 }
 
 for (const file of JJcommandFiles) {
-	const command = require(`./commands/JJ_commands/${file}`);
+	const command = require(`../commands/JJ_commands/${file}`);
 	JJcommands.push(command.data.toJSON());
 }
 
