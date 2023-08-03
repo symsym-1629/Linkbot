@@ -103,28 +103,28 @@ module.exports = {
 
         if (!interaction.member.roles.cache.has(process.env.validatorId)) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
         try {
-        const perso = await Perso.create({
-            name: name,
-            race: race,
-            affiliation: affiliation,
-            cplevel: cpLevel ? cpLevel : null,
-            rotationlevel: rotationLevel ? rotationLevel : null,
-            hamonlevel: hamonLevel ? hamonLevel : null,
-            vampirismelevel: vampirismeLevel ? vampirismeLevel : null,
-            ficheurl: url,
-            hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
-            hasrequiem: hasRequiem ? hasRequiem : null,
-            standname: standName ? standName : null,
-            standstats: stats ? stats : null,
-            imagelink: image ? image.url : null,
-            userid: user.id,
-            dead: false
-        });
+            const perso = await Perso.create({
+                name: name,
+                race: race,
+                affiliation: affiliation,
+                cplevel: cpLevel ? cpLevel : null,
+                rotationlevel: rotationLevel ? rotationLevel : null,
+                hamonlevel: hamonLevel ? hamonLevel : null,
+                vampirismelevel: vampirismeLevel ? vampirismeLevel : null,
+                ficheurl: url,
+                hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
+                hasrequiem: hasRequiem ? hasRequiem : null,
+                standname: standName ? standName : null,
+                standstats: stats ? stats : null,
+                imagelink: image ? image.url : null,
+                userid: user.id,
+                dead: false
+            });
         await interaction.editReply({content:`Le personnage ${perso.name} a bien été enregistré !`});
         } catch (error) {
             console.error(error);
             if (error.name === 'SequelizeUniqueConstraintError') {
-				return interaction.reply('Ce personnage existe déjà.');
+				return interaction.editReply('Ce personnage existe déjà.');
 			}
 
 			return interaction.editReply({content: 'Something went wrong with adding a tag.', ephemeral: true});
