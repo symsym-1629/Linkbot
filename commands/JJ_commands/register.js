@@ -142,7 +142,7 @@ module.exports = {
                 .setFooter({ text: `ID : ${element.id}` });
 
             let guild = interaction.guild;
-            let validChannel = await guild.channels.fetch("1008659272676163658");
+            let validChannel = await guild.channels.fetch("1137137433339760790");
             await validChannel.send({embeds: [embed]});
         } catch (error) {
             console.error(error);
