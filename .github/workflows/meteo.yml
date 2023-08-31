@@ -19,7 +19,7 @@ jobs:
         advices_json=$(curl -s "$advices_json_url")    
     
         # Extract advice strings    
-        advices_list=$(echo "$advices_json" | jq -r '.states[]')    
+        advices_list=$(echo "$advices_json" | jq '.states[]')    
     
         # Get a random advice    
         random_advice=$(echo "$advices_list" | shuf -n 1)       
