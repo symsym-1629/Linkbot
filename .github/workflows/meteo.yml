@@ -1,0 +1,30 @@
+name: Daily Advice  
+  
+on:  
+  schedule:  
+    - cron: '0 17/72 * * *' # Runs every day at 17:00  
+  workflow_dispatch:
+  
+jobs:    
+  send_advice:    
+    runs-on: ubuntu-latest    
+    
+    steps:      
+    - name: Send meteo    
+      env:    
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}    
+      run: |    
+        # Download JSON data    
+        advices_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/0df7ab50ca6dbfd59989cc0941cc4bb4271db09c/states.json"    
+        advices_json=$(curl -s "$advices_json_url")    
+    
+        # Extract advice strings    
+        advices_list=$(echo "$advices_json" | jq -r '.states[]')    
+    
+        # Get a random advice    
+        random_advice=$(echo "$advices_list" | shuf -n 1)       
+    
+        # Send advice to Discord webhook    
+        content="$random_advice"
+        payload="{\"content\": \"$content\"}"    
+        curl -s -X POST -H "Content-Type: application/json" -d "$payload" $DISCORD_WEBHOOK_URL  
