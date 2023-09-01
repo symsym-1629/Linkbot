@@ -19,10 +19,10 @@ jobs:
         states_json=$(curl -s "$states_json_url")    
     
         # Extract advice strings    
-        states_list=$(echo "$states_json" | jq -r '.states[]')    
+        # states_list=$(echo "$states_json" | jq -r '.states[]')    
     
         # Get a random advice    
-        random_state=$(echo "$states_list" | shuf -n 1)       
+        random_state=$(echo "$states_json" | shuf -n 1)       
     
         # Send advice to Discord webhook    
         content="$random_state"
