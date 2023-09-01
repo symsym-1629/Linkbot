@@ -19,7 +19,7 @@ jobs:
         OLD_IFS=$IFS
         IFS=$' '
         # Download JSON data    
-        states_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/1323a951d74806d907202c6dedcb9006df062abc/states.json"    
+        states_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/cf91862a73da779525d0873b7c67aa0d011c059a/states.json"    
         states_json=$(curl -s "$states_json_url")    
     
         # Extract advice strings    
