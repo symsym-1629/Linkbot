@@ -17,7 +17,7 @@ jobs:
         set -euo pipefail
         LC_ALL=C
         OLD_IFS=$IFS
-        IFS=$'\n'
+        IFS=$' '
         # Download JSON data    
         states_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/1323a951d74806d907202c6dedcb9006df062abc/states.json"    
         states_json=$(curl -s "$states_json_url")    
