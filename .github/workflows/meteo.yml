@@ -14,12 +14,8 @@ jobs:
       env:    
         DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}    
       run: |    
-        set -euo pipefail
-        LC_ALL=C
-        OLD_IFS=$IFS
-        IFS=$' '
         # Download JSON data    
-        states_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/50e4b3df205f85b4cf235dc6a53c0ad01f7262dc/states.json"    
+        states_json_url="https://gist.githubusercontent.com/symsym-1629/06293c4c49864927e51db27eb8c354fe/raw/7879e3ce36758645315063c3d9f443fa7aab15fd/states.json"    
         states_json=$(curl -s "$states_json_url")    
     
         # Extract advice strings    
