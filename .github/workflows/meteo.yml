@@ -2,7 +2,7 @@ name: Meteo RP
   
 on:  
   schedule:  
-    - cron: '0 17 * * */3' # Runs every day at 17:00  
+    - cron: '0 17 */3 * *' # Runs every day at 17:00  
   workflow_dispatch:
   
 jobs:    
