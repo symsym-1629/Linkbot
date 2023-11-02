@@ -1,9 +1,6 @@
 name: Docker Image Master CI
 
-on:  
-  push:
-    tags:
-      - '*'
+on: push
 
 jobs:
   build:
