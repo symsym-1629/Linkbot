@@ -10,7 +10,7 @@ COPY commands/ ./commands
 COPY database/ ./database
 
 # Install the packages
-RUN npm install --python=$(which python)
+RUN npm install --python="$(which python)"
 
 # Command used to start the app
 CMD [ "npm", "dockerStart" ]
