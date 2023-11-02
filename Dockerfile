@@ -12,6 +12,7 @@ COPY database/ ./database
 
 # Install the packages
 RUN npm install
+RUN apt-get remove -y python3
 
 # Command used to start the app
-CMD [ "npm", "dockerStart" ]
+CMD [ "npm", "start" ]
