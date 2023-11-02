@@ -10,7 +10,7 @@ COPY commands/ ./commands
 COPY database/ ./database
 
 # Install the packages
-RUN npm install --python="/opt/hostedtoolcache/Python/3.11.6/x64"
+RUN npm install --python=$(which python)
 
 # Command used to start the app
 CMD [ "npm", "dockerStart" ]
