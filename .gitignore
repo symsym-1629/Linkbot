@@ -4,3 +4,4 @@ dep.js
 items.json
 node_modules/
 database.sqlite
+.vscode/settings.json
