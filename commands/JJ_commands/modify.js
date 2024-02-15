@@ -77,7 +77,7 @@ module.exports = {
 
         const perso = await Perso.findOne({ where: {id: id} });
         if (!perso) return interaction.editReply({ content: `Ce perso n'existe pas`});
-        if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
+        if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && !rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
          
         if (race) {
             await perso.update({race : race}) 
