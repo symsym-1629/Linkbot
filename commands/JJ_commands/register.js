@@ -115,7 +115,7 @@ module.exports = {
                 hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
                 hasrequiem: hasRequiem ? hasRequiem : null,
                 standname: standName ? standName : null,
-                standstats: stats ? stats : null,
+                standstats: stats ? stats : "none-none-none-none-none-none",
                 imagelink: image ? image.url : null,
                 userid: user.id,
                 dead: false
