@@ -2,8 +2,9 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
 const Perso = require(`../../database/models/Perso`);
 require('dotenv/config');
+const choices = ['Fondation Speedwagon', 'LeBlanc Coffee', 'Neutre', 'Autre'];
 module.exports = {
-     data: new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('register')
         .setDescription('permet aux modos d\'ajouter la fiche d\'un joueur')
         .addStringOption(option => option
@@ -26,12 +27,13 @@ module.exports = {
             .setName('affiliation')
             .setDescription('Affiliation du personnage')
             .setRequired(true)
-            .addChoices(
+            .setAutocomplete(true)
+            /*.addChoices(
                 { name: 'Chaos', value: 'chaos' },
                 { name: 'Paix', value: 'paix' },
                 { name: 'Neutre', value: 'neutre' },
                 { name: 'Autre', value: 'autre' },
-            )
+            )*/
         )
         .addStringOption(option => option
             .setName('url')
@@ -84,6 +86,15 @@ module.exports = {
             .setName('image')
             .setDescription('Image du personnage')
         ),
+    async autocomplete(interaction) { // l'autocomplétion
+        const focusedValue = interaction.options.getFocused(); // on récupère ce que l'utilisateur a déjà tapé
+        
+        // on défini tout les choix dispos
+        const filtered = choices.filter(choice => choice.startsWith(focusedValue)); // on filtre les choix pour ne garder que ceux qui commencent par ce que l'utilisateur a tapé
+        await interaction.respond(
+            filtered.map(choice => ({ name: choice, value: choice })), // on renvoie les choix filtrés
+        ); 
+    },
     async execute(interaction) {
         await interaction.deferReply();
         const name = interaction.options.getString('name');
@@ -115,7 +126,7 @@ module.exports = {
                 hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
                 hasrequiem: hasRequiem ? hasRequiem : null,
                 standname: standName ? standName : null,
-                standstats: stats ? stats : null,
+                standstats: stats ? stats : "none-none-none-none-none-none",
                 imagelink: image ? image.url : null,
                 userid: user.id,
                 dead: false
