@@ -17,6 +17,7 @@ const client = new Discord.Client({
 const prefix = ";"
 
 client.commands = new Discord.Collection();
+client.contextCommands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
@@ -33,6 +34,12 @@ for (const file of JJcommandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
+}
+
+const userContextCommandFiles = fs.readdirSync('./context/user').filter(file => file.endsWith('.js'));
+for (const file of userContextCommandFiles) {
+  const command = require(`./context/user/${file}`);
+  client.contextCommands.set(command.data.name, command);
 }
 
 client.once("ready", async () => {
@@ -74,11 +81,21 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       else {
         interaction.reply({content: "Bruh je suis pas en voc tu sais ?", ephemeral: true});
       }
-    }
-    else if (interaction.customId === "stopButton") {
+    } else if (interaction.customId === "stopButton") {
       player.stop();
       client.user.setActivity();
       interaction.reply({content: "Arrêté !", ephemeral: true});
+    }
+  }
+  if (interaction.isUserContextMenuCommand()) {
+    const command = client.contextCommands.get(interaction.commandName);
+    if (!command) return;
+    try {
+      const user = interaction.targetUser;
+      await command.execute(interaction, user);
+    } catch (error) {
+      console.error(error);
+      await interaction.reply({content: 'Il y a eu une erreur en essayant d\'exécuter cette commande !', ephemeral: true});
     }
   }
   if (!interaction.isCommand()) return;

@@ -6,6 +6,7 @@ require("dotenv/config");
 
 const JJcommands = [];
 const JJcommandFiles = fs.readdirSync(`./commands/JJ_commands`).filter(file => file.endsWith('.js'));
+const userContextCommandFiles = fs.readdirSync('./context/user').filter(file => file.endsWith('.js'));
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -20,6 +21,11 @@ for (const file of JJcommandFiles) {
 	JJcommands.push(command.data.toJSON());
 }
 
+for (const file of userContextCommandFiles) {
+	const command = require(`../context/user/${file}`);
+	JJcommands.push(command.data.toJSON());
+}
+
 const rest = new REST({ version: '9' }).setToken(process.env.token);
 
 rest.put(Routes.applicationCommands(process.env.clientId), { body: commands },)
@@ -29,3 +35,4 @@ rest.put(Routes.applicationCommands(process.env.clientId), { body: commands },)
 rest.put(Routes.applicationGuildCommands(process.env.clientId, process.env.guildId), { body: JJcommands },)
 	.then(() => console.log('Successfully registered JJRPs application commands.'))
 	.catch(console.error);
+
