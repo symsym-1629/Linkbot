@@ -5,6 +5,8 @@ const fs = require("fs");
 const Perso = require("./database/models/Perso.js");
 const Item = require("./database/models/Item.js");
 const database = require("./database/init.js");
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 const myIntents = new Discord.IntentsBitField();
 const package = require("./package.json");
 require("dotenv/config");
@@ -18,6 +20,7 @@ const prefix = ";"
 
 client.commands = new Discord.Collection();
 client.contextCommands = new Discord.Collection();
+const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
@@ -25,8 +28,9 @@ for (const file of commandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
+  commands.push(command.data.toJSON());
 }
-
+const JJcommands = [];
 const JJcommandFiles = fs.readdirSync('./commands/JJ_commands').filter(file => file.endsWith('.js'));
 
 for (const file of JJcommandFiles) {
@@ -34,19 +38,18 @@ for (const file of JJcommandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
+  JJcommands.push(command.data.toJSON());
 }
 
 const userContextCommandFiles = fs.readdirSync('./context/user').filter(file => file.endsWith('.js'));
 for (const file of userContextCommandFiles) {
   const command = require(`./context/user/${file}`);
   client.contextCommands.set(command.data.name, command);
+  JJcommands.push(command.data.toJSON());
 }
 
 client.once("ready", async () => {
-  console.log("Linkbot est en ligne, tout roule");
-  let guild = await client.guilds.fetch(process.env.guildId);
-  let logChannel = await guild.channels.fetch(process.env.logChannelId);
-  await logChannel.send({content:`Linkbot@${package.version} est en ligne, tout roule`});
+  register(commands, JJcommands);
   try {
     await Perso.sync();
     await Item.sync();
@@ -55,6 +58,10 @@ client.once("ready", async () => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
+  let guild = await client.guilds.fetch(process.env.guildId);
+  let logChannel = await guild.channels.fetch(process.env.logChannelId);
+  await logChannel.send({content:`Linkbot@${package.version} est en ligne, tout roule`});
+  console.log("Linkbot est en ligne, tout roule");
 });
 
 client.on("error", console.error);
@@ -191,6 +198,26 @@ const clean = async (client, text) => {
   
   // Send off the cleaned up result
   return text;
+}
+function register(commands, JJcommands) {
+  const rest = new REST({ version: '9' }).setToken(process.env.token);
+
+  rest.put(Routes.applicationCommands(process.env.clientId), { body: commands },)
+  	.then(() => console.log('Successfully registered global application commands.'))
+  	.catch(console.error);
+
+  rest.put(Routes.applicationGuildCommands(process.env.clientId, process.env.guildId), { body: JJcommands },)
+  	.then(() => console.log('Successfully registered JJRPs application commands.'))
+  	.catch(console.error);
+  return;
+}
+function unregister() {
+  const rest = new REST({ version: '9' }).setToken(process.env.token);
+
+  rest.put(Routes.applicationCommands(process.env.clientId), { body: [] })
+  	.then(() => console.log('Successfully deleted all application commands.'))
+  	.catch(console.error);
+  return;
 }
 
 client.login(process.env.token)
