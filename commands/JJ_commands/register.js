@@ -66,20 +66,32 @@ module.exports = {
             .setRequired(false)
         )
         .addIntegerOption(option => option
-            .setName('cplevel')
-            .setDescription('Niveau de maitrise du chaos / paix')
-        )
-        .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+            )
         )
         .addIntegerOption(option => option
             .setName('rotationlevel')
             .setDescription('Niveau de maitrise de la rotation')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3 (wekapipo)', value: 3 },
+                { name: '3 (rectangle d\'or)', value: 4 },
+            )
         )
         .addIntegerOption(option => option
             .setName('vampirismelevel')
             .setDescription('Niveau de maitrise du vampirisme')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+            )
         )
         .addAttachmentOption(
             option => option
@@ -89,7 +101,7 @@ module.exports = {
     async autocomplete(interaction) { // l'autocomplétion
         const focusedValue = interaction.options.getFocused(); // on récupère ce que l'utilisateur a déjà tapé
         
-        // on défini tout les choix dispos
+        // on définis tout les choix dispos
         const filtered = choices.filter(choice => choice.startsWith(focusedValue)); // on filtre les choix pour ne garder que ceux qui commencent par ce que l'utilisateur a tapé
         await interaction.respond(
             filtered.map(choice => ({ name: choice, value: choice })), // on renvoie les choix filtrés
@@ -139,7 +151,7 @@ module.exports = {
                 element.imagelink ? embed.setThumbnail(element.imagelink) : console.log("no tmb")
                 embed.setAuthor({ name: `appartient à ${user.username}`, iconURL: user.displayAvatarURL()})
                 .setDescription(`race : ${element.race} \n affiliation : ${element.affiliation}`)
-                .addFields({ name: 'Capacités', value: `${element.cplevel ? `- Chaos / Paix : ${element.cplevel} \n` : "\n"}- Hamon : ${element.hamonlevel ? element.hamonlevel : "Non maitrisé"} \n- Rotation : ${element.rotationlevel ? element.rotationlevel : "Non maitrisé"} \n- Vampirisme : ${element.vampirismelevel ? element.vampirismelevel : "Non maitrisé"}` })
+                .addFields({ name: 'Capacités', value: `- Hamon : ${element.hamonlevel ? element.hamonlevel : "Non maitrisé"} \n- Rotation : ${element.rotationlevel ? element.rotationlevel == 4 ? "3 (rectange d'or)" : element.rotationlevel == 3 ? "3 (wekapipo)" : element.rotationlevel : "Non maitrisé"} \n- Vampirisme : ${element.vampirismelevel ? element.vampirismelevel : "Non maitrisé"}` })
                 if (element.standname) {
                     let args = element.standstats.split('-');
                     embed.addFields(

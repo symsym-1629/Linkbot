@@ -26,7 +26,7 @@ module.exports = {
                 element.imagelink ? embed.setThumbnail(element.imagelink) : console.log("no tmb")
                 embed.setAuthor({ name: `appartient à ${user.username}`, iconURL: user.displayAvatarURL()})
                 .setDescription(`race : ${element.race} \n affiliation : ${element.affiliation}`)
-                .addFields({ name: 'Capacités', value: `${element.cplevel ? `- Chaos / Paix : ${element.cplevel} \n` : "\n"}- Hamon : ${element.hamonlevel ? element.hamonlevel : "Non maitrisé"} \n- Rotation : ${element.rotationlevel ? element.rotationlevel : "Non maitrisé"} \n- Vampirisme : ${element.vampirismelevel ? element.vampirismelevel : "Non maitrisé"}` })
+                .addFields({ name: 'Capacités', value: `- Hamon : ${element.hamonlevel ? element.hamonlevel : "Non maitrisé"} \n- Rotation : ${element.rotationlevel ? element.rotationlevel == 4 ? "3 (rectange d'or)" : element.rotationlevel == 3 ? "3 (wekapipo)" : element.rotationlevel : "Non maitrisé"} \n- Vampirisme : ${element.vampirismelevel ? element.vampirismelevel : "Non maitrisé"}` })
                 if (element.standname) {
                     let args = element.standstats.split('-');
                     embed.addFields(
