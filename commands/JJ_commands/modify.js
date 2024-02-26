@@ -44,20 +44,32 @@ module.exports = {
             .setDescription('Le stand a-t-il un requiem ?')
         )
         .addIntegerOption(option => option
-            .setName('cplevel')
-            .setDescription('Niveau de maitrise du chaos / paix')
-        )
-        .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
-        )
-        .addIntegerOption(option => option
-            .setName('vampirismelevel')
-            .setDescription('Niveau de maitrise du vampirisme')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+            )
         )
         .addIntegerOption(option => option
             .setName('rotationlevel')
             .setDescription('Niveau de maitrise de la rotation')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3 (wekapipo)', value: 3 },
+                { name: '3 (rectangle d\'or)', value: 4 },
+            )
+        )
+        .addIntegerOption(option => option
+            .setName('vampirismelevel')
+            .setDescription('Niveau de maitrise du vampirisme')
+            .addChoices(
+                { name: '1', value: 1 },
+                { name: '2', value: 2 },
+                { name: '3', value: 3 },
+            )
         ),
     async execute(interaction) {
         await interaction.deferReply();
