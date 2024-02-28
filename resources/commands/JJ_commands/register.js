@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
-const Perso = require(`../../database/models/Perso`);
+const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 const choices = ['Fondation Speedwagon', 'LeBlanc Coffee', 'Neutre', 'Autre'];
 module.exports = {
@@ -156,7 +156,7 @@ module.exports = {
                     let args = element.standstats.split('-');
                     embed.addFields(
                         { name: `Stand : ${element.standname}`, value: '\u200B' },
-                        { name: 'Stats', value: `- Force : ${args[0]} \n- Vitesse : ${args[1]} \n- Portée : ${args[2]} \n- Durabilité : ${args[3]} \n- Précision : ${args[4]} \n- Potentiel : ${args[5]}`, inline: true },
+                        { name: 'Stats', value: `- Force : ${args[0]} \n- Vitesse : ${args[1]} \n- Portée : ${args[2]} \n- Durabilité : ${args[3]} \n- Précision : ${args[4]} \n- Potentiel : ${args[5]}`},
                         { name: 'Requiem', value: element.hasrequiem ? 'Oui' : 'Non', inline: true },
                         { name: 'Over Heaven', value: element.hasoverheaven ? 'Oui' : 'Non', inline: true },
                     )
@@ -165,7 +165,7 @@ module.exports = {
                 .setFooter({ text: `ID : ${element.id}` });
 
             let guild = interaction.guild;
-            let validChannel = await guild.channels.fetch("1137137433339760790");
+            let validChannel = await guild.channels.fetch(process.env.fichesChannelId);
             await validChannel.send({embeds: [embed]});
         } catch (error) {
             console.error(error);

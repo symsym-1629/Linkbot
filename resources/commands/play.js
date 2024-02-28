@@ -23,7 +23,7 @@ module.exports = {
                 .setStyle(Discord.ButtonStyle.Primary),
         );
 
-        const { player, client } = require('../index.js');
+        const { player, client } = require('../../index.js');
         const { Player } = require("discord-player");
         const { createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice');
         const ytdl = require('ytdl-core');

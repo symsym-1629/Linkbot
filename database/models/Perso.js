@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const database = require('../init.js');
+const database = require('../database.js');
 var Perso = database.define('persos', {
   id: {
     type: Sequelize.INTEGER,

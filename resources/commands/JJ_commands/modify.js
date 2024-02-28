@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
-const Perso = require(`../../database/models/Perso`);
+const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 module.exports = {
      data: new SlashCommandBuilder()

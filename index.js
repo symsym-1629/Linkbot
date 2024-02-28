@@ -4,7 +4,7 @@ const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
 const Perso = require("./database/models/Perso.js");
 const Item = require("./database/models/Item.js");
-const database = require("./database/init.js");
+const database = require("./database/database.js");
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const myIntents = new Discord.IntentsBitField();
@@ -21,29 +21,29 @@ const prefix = ";"
 client.commands = new Discord.Collection();
 client.contextCommands = new Discord.Collection();
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./resources/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(`./resources/commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
   commands.push(command.data.toJSON());
 }
 const JJcommands = [];
-const JJcommandFiles = fs.readdirSync('./commands/JJ_commands').filter(file => file.endsWith('.js'));
+const JJcommandFiles = fs.readdirSync('./resources/commands/JJ_commands').filter(file => file.endsWith('.js'));
 
 for (const file of JJcommandFiles) {
-	const command = require(`./commands/JJ_commands/${file}`);
+	const command = require(`./resources/commands/JJ_commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
   JJcommands.push(command.data.toJSON());
 }
 
-const userContextCommandFiles = fs.readdirSync('./context/user').filter(file => file.endsWith('.js'));
+const userContextCommandFiles = fs.readdirSync('./resources/context/user').filter(file => file.endsWith('.js'));
 for (const file of userContextCommandFiles) {
-  const command = require(`./context/user/${file}`);
+  const command = require(`./resources/context/user/${file}`);
   client.contextCommands.set(command.data.name, command);
   JJcommands.push(command.data.toJSON());
 }
