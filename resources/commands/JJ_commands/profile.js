@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
+const utils = require(`../../utils`);
 const Perso = require(`../../../database/models/Perso`);
 module.exports = {
      data: new SlashCommandBuilder()
@@ -18,11 +19,14 @@ module.exports = {
         if (!perso[0]) {
             return await interaction.editReply({ content: `Ce joueur n'a pas de perso enregistré`, ephemeral: true });
         };
-        let allEmbed = [];
-        perso.forEach(element => {
-            
-            allEmbed.push(embed);
-        });
-        await interaction.editReply({embeds: allEmbed});
+        // let allEmbed = [];
+        // perso.forEach(element => {
+        //     embed = utils.getPerso(element.id, user);
+        //     console.log(embed);
+        //     allEmbed.push(embed);
+        // })
+        const embeds = await Promise.all(perso.map(element => utils.getPerso(element.id, user)));
+        // console.log(allEmbed);
+        await interaction.editReply({embeds: embeds});
     },
 };

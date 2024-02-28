@@ -3,7 +3,7 @@ const Discord = require(`discord.js`);
 const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 module.exports = {
-     data: new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('modifyperso')
         .setDescription('Permet de modifier un personnage de rp pour les modos')
         .addIntegerOption(option => option
