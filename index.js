@@ -3,12 +3,12 @@ const Discord = require("discord.js");
 const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
 const Perso = require("./database/models/Perso.js");
-const Item = require("./database/models/Item.js");
 const database = require("./database/database.js");
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const myIntents = new Discord.IntentsBitField();
 const package = require("./package.json");
+const utils = require(`./resources/utils.js`);
 require("dotenv/config");
 
 myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
@@ -52,7 +52,6 @@ client.once("ready", async () => {
   register(commands, JJcommands);
   try {
     await Perso.sync();
-    await Item.sync();
     await database.authenticate();
     console.log('Connection has been established successfully.');
   } catch (error) {
@@ -93,8 +92,21 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       client.user.setActivity();
       interaction.reply({content: "Arrêté !", ephemeral: true});
     }
+  } else if (interaction.isStringSelectMenu()) {
+    let values = interaction.values[0].split("-");
+    // values = ["id", "act"]
+    const perso = await Perso.findOne({ where: {id: values[0]} });
+    console.log(perso.userid);
+    let user = await client.users.fetch(perso.userid);
+    //let user = await guild.members.fetch(userid);
+    let val = await utils.getPerso(values[0], user, values[1]);
+    // val = [embed, select]
+    let row = new Discord.ActionRowBuilder()
+      .addComponents(val[1]);
+    interaction.update({embeds: [val[0]], components: [row], ephemeral: true});
+
   }
-  if (interaction.isUserContextMenuCommand()) {
+  else if (interaction.isUserContextMenuCommand()) {
     const command = client.contextCommands.get(interaction.commandName);
     if (!command) return;
     try {
@@ -127,22 +139,6 @@ client.on("messageCreate", async message => {
     message.reply("ça marche");
   }
   
-  else if (command === "additem") {
-    if (args[0]) {
-      let item = args.join(" ");
-      fs.readFile('items.json', 'utf8', function readFileCallback(err, data){
-        err ? console.log(err) : console.log("fichier lu"); {
-        obj = JSON.parse(data); //now it an object
-        obj.items.push(item); //add some data
-        json = JSON.stringify(obj); //convert it back to json
-        fs.writeFile('items.json', json, 'utf8', function(err) {
-          err ? console.log(err) : console.log("fichier écrit"); // write it back 
-        }); // write it back 
-      }});
-      message.reply("Item ajouté ! C'est le chat qui va être content !");
-      
-    }
-  }
   else if (command === "eval") {
     message.delete();
     if (message.author.id !== "922457431940935691") return;

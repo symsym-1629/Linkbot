@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder, ActionRowBuilder } = require('@discordjs/builders');
 const utils = require(`../../utils`);
 const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
@@ -65,6 +65,11 @@ module.exports = {
             .setDescription('Le stand a-t-il un requiem ?')
             .setRequired(false)
         )
+        .addBooleanOption(option => option
+            .setName('hasacts')
+            .setDescription('Le stand est-t-il un stand à act ?')
+            .setRequired(false)
+        )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
@@ -118,6 +123,7 @@ module.exports = {
         const hasOverHeaven = interaction.options.getBoolean('hasoverheaven');
         const hasRequiem = interaction.options.getBoolean('hasrequiem');
         const cpLevel = interaction.options.getInteger('cplevel');
+        const hasActs = interaction.options.getBoolean('hasacts');
         const hamonLevel = interaction.options.getInteger('hamonlevel');
         const vampirismeLevel = interaction.options.getInteger('vampirismelevel');
         const rotationLevel = interaction.options.getInteger('rotationlevel');
@@ -138,6 +144,7 @@ module.exports = {
                 hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
                 hasrequiem: hasRequiem ? hasRequiem : null,
                 standname: standName ? standName : null,
+                hasacts: hasActs ? hasActs : null,
                 standstats: stats ? stats : "none-none-none-none-none-none",
                 imagelink: image ? image.url : null,
                 userid: user.id,
@@ -145,10 +152,15 @@ module.exports = {
             });
             await interaction.editReply({content:`Le personnage ${element.name} a bien été enregistré !`});
 
-            let embed = await utils.getPerso(element.id, user);
+            let value = await utils.getPerso(element.id, user);
             let guild = interaction.guild;
             let validChannel = await guild.channels.fetch(process.env.fichesChannelId);
-            await validChannel.send({embeds: [embed]});
+            if (value[1] != null) {
+                const row = new ActionRowBuilder().addComponents(value[1]);
+                await validChannel.send({embeds: [value[0]], components: [row]});
+            } else {
+                await validChannel.send({embeds: [value[0]]});
+            }
         } catch (error) {
             console.error(error);
             if (error.name === 'SequelizeUniqueConstraintError') {

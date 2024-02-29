@@ -20,13 +20,19 @@ module.exports = {
             return await interaction.editReply({ content: `Ce joueur n'a pas de perso enregistré`, ephemeral: true });
         };
         // let allEmbed = [];
-        // perso.forEach(element => {
-        //     embed = utils.getPerso(element.id, user);
-        //     console.log(embed);
-        //     allEmbed.push(embed);
-        // })
-        const embeds = await Promise.all(perso.map(element => utils.getPerso(element.id, user)));
+        perso.forEach(async element => {
+            let value = await utils.getPerso(element.id, user);
+            // console.log(embed);
+            // allEmbed.push(embed);
+            if (value[1] != null) {
+                const row = new Discord.ActionRowBuilder().addComponents(value[1]);
+                await interaction.channel.send({embeds: [value[0]], components: [row]});
+            } else {
+                await interaction.channel.send({embeds: [value[0]]});
+            }
+        })
+        // const embeds = await Promise.all(perso.map(element => utils.getPerso(element.id, user)));
         // console.log(allEmbed);
-        await interaction.editReply({embeds: embeds});
+        
     },
 };
