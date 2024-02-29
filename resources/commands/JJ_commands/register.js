@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const Discord = require(`discord.js`);
-const Perso = require(`../../database/models/Perso`);
+const { SlashCommandBuilder, ActionRowBuilder } = require('@discordjs/builders');
+const utils = require(`../../utils`);
+const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 const choices = ['Fondation Speedwagon', 'LeBlanc Coffee', 'Neutre', 'Autre'];
 module.exports = {
@@ -65,6 +65,11 @@ module.exports = {
             .setDescription('Le stand a-t-il un requiem ?')
             .setRequired(false)
         )
+        .addBooleanOption(option => option
+            .setName('hasacts')
+            .setDescription('Le stand est-t-il un stand à act ?')
+            .setRequired(false)
+        )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
@@ -118,6 +123,7 @@ module.exports = {
         const hasOverHeaven = interaction.options.getBoolean('hasoverheaven');
         const hasRequiem = interaction.options.getBoolean('hasrequiem');
         const cpLevel = interaction.options.getInteger('cplevel');
+        const hasActs = interaction.options.getBoolean('hasacts');
         const hamonLevel = interaction.options.getInteger('hamonlevel');
         const vampirismeLevel = interaction.options.getInteger('vampirismelevel');
         const rotationLevel = interaction.options.getInteger('rotationlevel');
@@ -138,6 +144,7 @@ module.exports = {
                 hasoverheaven: hasOverHeaven ? hasOverHeaven : null,
                 hasrequiem: hasRequiem ? hasRequiem : null,
                 standname: standName ? standName : null,
+                hasacts: hasActs ? hasActs : null,
                 standstats: stats ? stats : "none-none-none-none-none-none",
                 imagelink: image ? image.url : null,
                 userid: user.id,
@@ -145,28 +152,15 @@ module.exports = {
             });
             await interaction.editReply({content:`Le personnage ${element.name} a bien été enregistré !`});
 
-            let embed = new Discord.EmbedBuilder()
-                .setColor('Random')
-                .setTitle(element.name)
-                element.imagelink ? embed.setThumbnail(element.imagelink) : console.log("no tmb")
-                embed.setAuthor({ name: `appartient à ${user.username}`, iconURL: user.displayAvatarURL()})
-                .setDescription(`race : ${element.race} \n affiliation : ${element.affiliation}`)
-                .addFields({ name: 'Capacités', value: `- Hamon : ${element.hamonlevel ? element.hamonlevel : "Non maitrisé"} \n- Rotation : ${element.rotationlevel ? element.rotationlevel == 4 ? "3 (rectange d'or)" : element.rotationlevel == 3 ? "3 (wekapipo)" : element.rotationlevel : "Non maitrisé"} \n- Vampirisme : ${element.vampirismelevel ? element.vampirismelevel : "Non maitrisé"}` })
-                if (element.standname) {
-                    let args = element.standstats.split('-');
-                    embed.addFields(
-                        { name: `Stand : ${element.standname}`, value: '\u200B' },
-                        { name: 'Stats', value: `- Force : ${args[0]} \n- Vitesse : ${args[1]} \n- Portée : ${args[2]} \n- Durabilité : ${args[3]} \n- Précision : ${args[4]} \n- Potentiel : ${args[5]}`, inline: true },
-                        { name: 'Requiem', value: element.hasrequiem ? 'Oui' : 'Non', inline: true },
-                        { name: 'Over Heaven', value: element.hasoverheaven ? 'Oui' : 'Non', inline: true },
-                    )
-                };
-                embed.addFields({ name: 'Lien vers la fiche', value: element.ficheurl })
-                .setFooter({ text: `ID : ${element.id}` });
-
+            let value = await utils.getPerso(element.id, user);
             let guild = interaction.guild;
-            let validChannel = await guild.channels.fetch("1137137433339760790");
-            await validChannel.send({embeds: [embed]});
+            let validChannel = await guild.channels.fetch(process.env.fichesChannelId);
+            if (value[1] != null) {
+                const row = new ActionRowBuilder().addComponents(value[1]);
+                await validChannel.send({embeds: [value[0]], components: [row]});
+            } else {
+                await validChannel.send({embeds: [value[0]]});
+            }
         } catch (error) {
             console.error(error);
             if (error.name === 'SequelizeUniqueConstraintError') {

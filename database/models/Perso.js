@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const database = require('../init.js');
+const database = require('../database.js');
 var Perso = database.define('persos', {
   id: {
     type: Sequelize.INTEGER,
@@ -50,7 +50,11 @@ var Perso = database.define('persos', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  userid: Sequelize.BIGINT,
+  userid: Sequelize.STRING,
+  hasacts: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
   dead: Sequelize.BOOLEAN
 });
 

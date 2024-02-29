@@ -1,9 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
-const Perso = require(`../../database/models/Perso`);
+const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 module.exports = {
-     data: new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('modifyperso')
         .setDescription('Permet de modifier un personnage de rp pour les modos')
         .addIntegerOption(option => option
@@ -43,6 +43,11 @@ module.exports = {
             .setName('hasrequiem')
             .setDescription('Le stand a-t-il un requiem ?')
         )
+        .addBooleanOption(option => option
+            .setName('hasacts')
+            .setDescription('Le stand est-t-il un stand à act ?')
+            .setRequired(false)
+        )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
@@ -80,6 +85,7 @@ module.exports = {
         const stats = interaction.options.getString('stats');
         const hasoverheaven = interaction.options.getBoolean('hasoverheaven');
         const hasrequiem = interaction.options.getBoolean('hasrequiem');
+        const hasacts = interaction.options.getBoolean('hasacts');
         const cplevel = interaction.options.getInteger('cplevel');
         const hamonlevel = interaction.options.getInteger('hamonlevel');
         const vampirismelevel = interaction.options.getInteger('vampirismelevel');
@@ -90,7 +96,7 @@ module.exports = {
         const perso = await Perso.findOne({ where: {id: id} });
         if (!perso) return interaction.editReply({ content: `Ce perso n'existe pas`});
         if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && !rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
-         
+        
         if (race) {
             await perso.update({race : race}) 
             interaction.editReply({ content: `race modifiée`});
@@ -114,6 +120,10 @@ module.exports = {
         if (hasoverheaven) {
             await perso.update({hasoverheaven : hasoverheaven})
             interaction.editReply({ content: `hasoverheaven modifiée`});
+        };
+        if (hasacts) {
+            await perso.update({hasacts : hasacts})
+            interaction.editReply({ content: `hasacts modifié`});
         };
         if (cplevel) {
             await perso.update({cplevel : cplevel})

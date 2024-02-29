@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const Perso = require(`../../database/models/Perso`);
+const Perso = require(`../../../database/models/Perso`);
 module.exports = {
     data: new Discord.ContextMenuCommandBuilder()
 	    .setName('See RP Profile')
