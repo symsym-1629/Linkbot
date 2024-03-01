@@ -1,6 +1,6 @@
 {
   "name": "linkbot",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Linkbot est un bot de diverses choses comme la musique ou encore l'apprentissage du code (surtout ca enft)",
   "main": "index.js",
   "scripts": {
