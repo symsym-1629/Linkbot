@@ -134,7 +134,7 @@ module.exports = {
         const rotationLevel = interaction.options.getInteger('rotationlevel');
         const image = interaction.options.getAttachment('image');
         const user = interaction.options.getUser('user');
-        const Actname = interaction.option.getString('actname');
+        const Actname = interaction.options.getString('actname');
 
         if (!interaction.member.roles.cache.has(process.env.validatorId)) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
         try {
