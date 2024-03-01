@@ -70,6 +70,11 @@ module.exports = {
             .setDescription('Le stand est-t-il un stand à act ?')
             .setRequired(false)
         )
+        .addStringOption(option => option
+            .setName('actname')
+            .setDescription('Nom de la "forme" (act, forme...)')
+            .setRequired(false)
+        )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
@@ -129,6 +134,7 @@ module.exports = {
         const rotationLevel = interaction.options.getInteger('rotationlevel');
         const image = interaction.options.getAttachment('image');
         const user = interaction.options.getUser('user');
+        const Actname = interaction.option.getString('actname');
 
         if (!interaction.member.roles.cache.has(process.env.validatorId)) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
         try {
@@ -145,6 +151,7 @@ module.exports = {
                 hasrequiem: hasRequiem ? hasRequiem : null,
                 standname: standName ? standName : null,
                 hasacts: hasActs ? hasActs : null,
+                actname: Actname ? Actname : "Act",
                 standstats: stats ? stats : "none-none-none-none-none-none",
                 imagelink: image ? image.url : null,
                 userid: user.id,

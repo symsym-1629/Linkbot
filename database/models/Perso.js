@@ -46,15 +46,16 @@ var Perso = database.define('persos', {
     type: Sequelize.STRING,
     allowNull: true
   },
+  actname: Sequelize.STRING,
+  hasacts: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true
+  },
   imagelink: {
     type: Sequelize.STRING,
     allowNull: true
   },
   userid: Sequelize.STRING,
-  hasacts: {
-    type: Sequelize.BOOLEAN,
-    allowNull: true
-  },
   dead: Sequelize.BOOLEAN
 });
 
