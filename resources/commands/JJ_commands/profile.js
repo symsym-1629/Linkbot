@@ -12,7 +12,7 @@ module.exports = {
             .setRequired(true)
         ),
     async execute(interaction) {
-        await interaction.deferReply()
+        await interaction.deferReply({ephemeral: true})
         const user = await interaction.options.getUser('user');
         console.log(user.id)
         const perso = await Perso.findAll({ where: {userid: user.id, dead: false} });
@@ -33,6 +33,6 @@ module.exports = {
         })
         // const embeds = await Promise.all(perso.map(element => utils.getPerso(element.id, user)));
         // console.log(allEmbed);
-        
+        await interaction.editReply({content: `Voici les persos de ${user.username}`, ephemeral: true});
     },
 };

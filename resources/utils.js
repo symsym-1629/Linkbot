@@ -7,7 +7,7 @@ const getPerso = async function getPerso(id, user, act = 0) {
     if (element.hasacts == true) {
         select = new StringSelectMenuBuilder()
             .setCustomId('act')
-            .setPlaceholder('Quel Act voulez-vous voir ?');
+            .setPlaceholder(`Quel ${element.actname} voulez-vous voir ?`);
     }
     let embed = new EmbedBuilder()
         .setColor("Random")
@@ -24,14 +24,14 @@ const getPerso = async function getPerso(id, user, act = 0) {
             for (let i = 0; i < actStats.length; i++) {
                 select.addOptions(
                     new StringSelectMenuOptionBuilder()
-                        .setLabel(`Act ${i+1}`)
+                        .setLabel(`${element.actname} ${i+1}`)
                         .setValue(`${id}-${i}`));
             }
         } else {
             args = element.standstats.split('-');
         }
         embed.addFields(
-            { name: `Stand : ${element.standname}`, value: element.hasacts ? act == 0 ? `Act 1` : `Act ${parseInt(act)+1}` : '\u200B' },
+            { name: `Stand : ${element.standname}`, value: element.hasacts ? `${element.actname} ${parseInt(act)+1}` : '\u200B' },
             { name: 'Stats', value: `- Force : ${args[0]} \n- Vitesse : ${args[1]} \n- Portée : ${args[2]} \n- Durabilité : ${args[3]} \n- Précision : ${args[4]} \n- Potentiel : ${args[5]}`, inline: false },
             { name: 'Requiem', value: element.hasrequiem ? 'Oui' : 'Non', inline: true },
             { name: 'Over Heaven', value: element.hasoverheaven ? 'Oui' : 'Non', inline: true },

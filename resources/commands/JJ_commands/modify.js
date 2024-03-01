@@ -48,6 +48,11 @@ module.exports = {
             .setDescription('Le stand est-t-il un stand à act ?')
             .setRequired(false)
         )
+        .addStringOption(option => option
+            .setName('actname')
+            .setDescription('Nom de la "forme" (act, forme...)')
+            .setRequired(false)
+        )
         .addIntegerOption(option => option
             .setName('hamonlevel')
             .setDescription('Niveau de maitrise du hamon')
@@ -90,12 +95,13 @@ module.exports = {
         const hamonlevel = interaction.options.getInteger('hamonlevel');
         const vampirismelevel = interaction.options.getInteger('vampirismelevel');
         const rotationlevel = interaction.options.getInteger('rotationlevel');
+        const Actname = interaction.options.getString('actname');
 
         if (!interaction.member.roles.cache.has(process.env.validatorId)) return interaction.editReply({content:`Vous n'avez pas la permission d'utiliser cette commande !`});
 
         const perso = await Perso.findOne({ where: {id: id} });
         if (!perso) return interaction.editReply({ content: `Ce perso n'existe pas`});
-        if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && !rotationlevel) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
+        if (!race && !user && !standname && !stats && !hasoverheaven && !hasrequiem && !cplevel && !hamonlevel && !vampirismelevel && !rotationlevel && !hasacts && !Actname) return interaction.editReply({ content: `Il faut au moins 1 argument`, ephemeral: true });
         
         if (race) {
             await perso.update({race : race}) 
@@ -140,6 +146,10 @@ module.exports = {
         if (rotationlevel) {
             await perso.update({rotationlevel : rotationlevel}) 
             interaction.editReply({ content: `rotationlevel modifiée`});
+        };
+        if (Actname) {
+            await perso.update({actname : Actname}) 
+            interaction.editReply({ content: `nom de la forme modifié `});
         };
     },
 };
