@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
+
+// commande pour supprimer un nombre de message (peut être limité à un utilisateur)
 module.exports = {
      data: new SlashCommandBuilder()
         .setName('clear')

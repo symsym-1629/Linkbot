@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
-
 const database = require('../database.js');
+
+// initialisation de la table Perso
 var Perso = database.define('persos', {
   id: {
     type: Sequelize.INTEGER,

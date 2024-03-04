@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
+
+// commande pour retirer le fond d'une image à l'aide de l'api remove.bg (requiert une clé d'api)
 module.exports = {
-     data: new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('removebg')
         .setDescription('Retire le fond d\'une image')
         .addAttachmentOption(option => option

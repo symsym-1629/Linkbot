@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
+
+// supprime tout les salons d'une catégorie donnée
 module.exports = {
      data: new SlashCommandBuilder()
         .setName('delete_category')

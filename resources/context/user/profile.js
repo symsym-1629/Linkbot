@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const utils = require(`../../utils.js`);
 const Perso = require(`../../../database/models/Perso`);
+
+// commande pour voir le profil rp d'un joueur mais en context menu
 module.exports = {
     data: new Discord.ContextMenuCommandBuilder()
 	    .setName('See RP Profile')

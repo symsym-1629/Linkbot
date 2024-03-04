@@ -1,7 +1,11 @@
+// fichier contenant des fonctions utiles / globales pour les commandes
+
 const { EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
 const Perso = require('../database/models/Perso');
 
+
 const getPerso = async function getPerso(id, user, act = 0) {
+    // génère un embed avec les informations du personnage rp demandé
     const element = await Perso.findOne({ where: {id: id} });
     let select = null;
     if (element.hasacts == true) {
