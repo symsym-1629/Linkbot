@@ -9,6 +9,7 @@ const { Routes } = require('discord-api-types/v9');
 const myIntents = new Discord.IntentsBitField();
 const package = require("./package.json");
 const utils = require(`./resources/utils.js`);
+const Inventory = require("./database/models/Inventory.js");
 require("dotenv/config");
 // Création du client
 myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
@@ -53,7 +54,7 @@ client.once("ready", async () => {
   register(commands, JJcommands);
   // Connexion à la base de données
   try {
-    
+    await Inventory.sync();
     await Perso.sync();
     await database.authenticate();
     console.log('Connection has been established successfully.');
