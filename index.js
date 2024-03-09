@@ -1,4 +1,4 @@
-//Discord
+// Initialisation des dépendances
 const Discord = require("discord.js");
 const { createAudioPlayer } = require('@discordjs/voice');
 const fs = require("fs");
@@ -9,15 +9,16 @@ const { Routes } = require('discord-api-types/v9');
 const myIntents = new Discord.IntentsBitField();
 const package = require("./package.json");
 const utils = require(`./resources/utils.js`);
+const Inventory = require("./database/models/Inventory.js");
 require("dotenv/config");
-
+// Création du client
 myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
 const client = new Discord.Client({
   intents: myIntents
 });
 
 const prefix = ";"
-
+// Initialisation des commandes (upload + register dans le client)
 client.commands = new Discord.Collection();
 client.contextCommands = new Discord.Collection();
 const commands = [];
@@ -47,16 +48,20 @@ for (const file of userContextCommandFiles) {
   client.contextCommands.set(command.data.name, command);
   JJcommands.push(command.data.toJSON());
 }
-
+// Script de démarrage du bot
 client.once("ready", async () => {
+  // enregistrement des commandes sur discord
   register(commands, JJcommands);
+  // Connexion à la base de données
   try {
+    await Inventory.sync();
     await Perso.sync();
     await database.authenticate();
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
+  // Envoi du message de démarrage du bot dans le channel de log et dans la console
   let guild = await client.guilds.fetch(process.env.guildId);
   let logChannel = await guild.channels.fetch(process.env.logChannelId);
   await logChannel.send({content:`Linkbot@${package.version} est en ligne, tout roule`});
@@ -67,11 +72,13 @@ client.on("error", console.error);
 client.on("warn", console.warn);
 
 const player = createAudioPlayer()
-
+// export du lecteur audio ainsi que du client afin de pouvoir les utiliser dans d'autres fichiers
 module.exports = {player : player, client : client};
 
+// Event listener pour les interactions soit event principal du bot
 client.on(Discord.Events.InteractionCreate, async interaction => {
   console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+  // pour les boutons (la musique actuellement)
 	if (interaction.isButton()) {
 	  if (interaction.customId === "playButton") {
       if (client.voice) {
@@ -92,13 +99,13 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       client.user.setActivity();
       interaction.reply({content: "Arrêté !", ephemeral: true});
     }
+  // pour les menus déroulants (les acts)
   } else if (interaction.isStringSelectMenu()) {
     let values = interaction.values[0].split("-");
     // values = ["id", "act"]
     const perso = await Perso.findOne({ where: {id: values[0]} });
     console.log(perso.userid);
     let user = await client.users.fetch(perso.userid);
-    //let user = await guild.members.fetch(userid);
     let val = await utils.getPerso(values[0], user, values[1]);
     // val = [embed, select]
     let row = new Discord.ActionRowBuilder()
@@ -106,6 +113,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
     interaction.update({embeds: [val[0]], components: [row], ephemeral: true});
 
   }
+  // handler pour les commandes de contexte d'utilisateur
   else if (interaction.isUserContextMenuCommand()) {
     const command = client.contextCommands.get(interaction.commandName);
     if (!command) return;
@@ -117,17 +125,20 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       await interaction.reply({content: 'Il y a eu une erreur en essayant d\'exécuter cette commande !', ephemeral: true});
     }
   }
+  // a ce stade, il ne reste que les slash commandes
   if (!interaction.isCommand()) return;
+  // on récupère la commande register dans le client
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
   try {
+    // on execute la commande
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
     await interaction.reply({content: 'Il y a eu une erreur en essayant d\'exécuter cette commande !', ephemeral: true});
   }
 });
-
+// Event listener pour les messages
 client.on("messageCreate", async message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
@@ -195,6 +206,7 @@ const clean = async (client, text) => {
   // Send off the cleaned up result
   return text;
 }
+// Fonction pour mettre à jour les commandes sur discord
 function register(commands, JJcommands) {
   const rest = new REST({ version: '9' }).setToken(process.env.token);
 
@@ -207,6 +219,7 @@ function register(commands, JJcommands) {
   	.catch(console.error);
   return;
 }
+// Fonction pour supprimer les commandes sur discord
 function unregister() {
   const rest = new REST({ version: '9' }).setToken(process.env.token);
 
@@ -215,5 +228,5 @@ function unregister() {
   	.catch(console.error);
   return;
 }
-
+// Connexion du bot à discord
 client.login(process.env.token)

@@ -2,8 +2,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
 const utils = require(`../../utils`);
 const Perso = require(`../../../database/models/Perso`);
+
+// affiche les persos non morts d'un joueur
 module.exports = {
-     data: new SlashCommandBuilder()
+    data: new SlashCommandBuilder()
         .setName('rp_profile')
         .setDescription('permets de voir les persos d\'un joueur')
         .addUserOption(option => option

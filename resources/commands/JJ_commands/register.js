@@ -3,6 +3,8 @@ const utils = require(`../../utils`);
 const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
 const choices = ['Fondation Speedwagon', 'LeBlanc Coffee', 'Neutre', 'Autre'];
+
+// commande pour enregistrer un personnage dans la base de données
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('register')
@@ -20,6 +22,7 @@ module.exports = {
                 { name: 'Humain', value: 'humain' },
                 { name: 'Vampire', value: 'vampire' },
                 { name: 'Homme du pilier', value: 'homme du pilier' },
+                { name: 'Homme rocher', value: 'homme rocher' },
                 { name: 'Autre', value: 'autre' },
             )
         )

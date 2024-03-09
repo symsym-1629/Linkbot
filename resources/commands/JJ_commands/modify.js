@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
 const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
+
+// commande pour modifier un personnage de rp pour les modos (en cas d'erreur principalement)
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('modifyperso')
@@ -18,6 +20,7 @@ module.exports = {
                 { name: 'Humain', value: 'humain' },
                 { name: 'Vampire', value: 'vampire' },
                 { name: 'Homme du pilier', value: 'homme du pilier' },
+                { name: 'Homme rocher', value: 'homme rocher' },
                 { name: 'Autre', value: 'autre' },
             )
         )

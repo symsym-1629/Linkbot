@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require("discord.js");
 
+// commande de test pour vérifier si le bot est en ligne
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('test')

@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require(`discord.js`);
 const Perso = require(`../../../database/models/Perso`);
 require('dotenv/config');
+
+// Tue un personnage
 module.exports = {
      data: new SlashCommandBuilder()
         .setName('kill')
