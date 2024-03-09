@@ -22,6 +22,7 @@ module.exports = {
                 { name: 'Humain', value: 'humain' },
                 { name: 'Vampire', value: 'vampire' },
                 { name: 'Homme du pilier', value: 'homme du pilier' },
+                { name: 'Homme rocher', value: 'homme rocher' },
                 { name: 'Autre', value: 'autre' },
             )
         )
