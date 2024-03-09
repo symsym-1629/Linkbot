@@ -20,7 +20,7 @@ module.exports = {
         await interaction.deferReply();
         let userid = interaction.user.id;
         if (interaction.options.getSubcommand() == "pouvoir") {
-            var rollp = Math.random()*80
+            var rollp = Math.random()*70
             console.log(rollp)
             rollp = Math.floor(rollp)
             console.log(rollp)
