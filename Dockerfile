@@ -11,7 +11,7 @@ COPY resources/ ./resources
 COPY database/ ./database
 
 # Install the packages
-RUN npm install
+RUN npm install --omit=dev
 RUN apt-get remove -y python3
 
 # Command used to start the app
