@@ -3,6 +3,8 @@ Linkbot est un bot discord destiné à faciliter le RP jojo's bizzare adventure 
 
 Si vous souhaitez utilisez le projet sur un autre serveur discord, n'hésitez pas à me contacter sur discord (@symsym1629), mais cela ne devrait pas poser de problème, la licence est libre.
 
+Vous pouvez aussi contribuer pour ajouter des fonctionnalités ^^
+
 ## Comment lancer le bot afin de contribuer
 
 ### Méthode 1 : Docker
