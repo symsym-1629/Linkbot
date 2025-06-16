@@ -1,18 +1,23 @@
-# Base image to use
-FROM node:18
+# Base de l'image utilisée
+FROM node:18-slim
 
-# App directory
-WORKDIR /linkbot
+# Répertoire de l'application
+WORKDIR /app/Linkbot
+
+# Installation des dépendances nécessaires
 RUN apt-get update && apt-get install -y python3
 
-# Copy files in the workdir
-COPY package.json package-lock.json index.js ./
-COPY resources/ ./resources
-COPY database/ ./database
+# Copie des fichiers de packages
+COPY package.json package-lock.json ./
 
-# Install the packages
+# Copie de tous les fichiers de l'application
+COPY . .
+
+# Installation des packages
 RUN npm install
+
+# Nettoyage des dépendances pour réduire la taille de l'image
 RUN apt-get remove -y python3
 
-# Command used to start the app
-CMD [ "npm", "start" ]
+# Lancer l'application
+CMD ["npm", "start"]

@@ -1,0 +1,10 @@
+.devcontainer
+.github
+.vscode
+LOGGING.md
+LICENSE
+README.md
+.replit
+.gitignore
+.env.example
+node_modules

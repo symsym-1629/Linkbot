@@ -1,0 +1,17 @@
+services:
+  linkbot: 
+    build: .
+    image: linkbot:laster
+    container_name: linkbot
+    volumes:
+      - linkbotDebug:/app/Linkbot/logs
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'    
+          memory: 2G
+
+volumes:
+  linkbotDebug:
+    external: true

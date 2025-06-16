@@ -2,6 +2,6 @@
 dep.js
 .idea/**
 items.json
-node_modules/
+node_modules
 database.sqlite
-.vscode/settings.json
+.vscode
