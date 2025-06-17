@@ -10,6 +10,7 @@ const myIntents = new Discord.IntentsBitField();
 const package = require("./package.json");
 const utils = require(`./resources/utils.js`);
 const Inventory = require("./database/models/Inventory.js");
+const { logger } = require('./resources/plugin/logger');
 require("dotenv/config");
 // Création du client
 myIntents.add(Discord.IntentsBitField.Flags.Guilds, Discord.IntentsBitField.Flags.GuildMessages, Discord.IntentsBitField.Flags.GuildMembers, Discord.IntentsBitField.Flags.GuildPresences, Discord.IntentsBitField.Flags.MessageContent, Discord.IntentsBitField.Flags.GuildVoiceStates);
@@ -58,14 +59,17 @@ client.once("ready", async () => {
     await Perso.sync();
     await database.authenticate();
     console.log('Connection has been established successfully.');
+    logger.info('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
+    logger.error('Unable to connect to the database:', error);
   }
   // Envoi du message de démarrage du bot dans le channel de log et dans la console
   let guild = await client.guilds.fetch(process.env.guildId);
   let logChannel = await guild.channels.fetch(process.env.logChannelId);
   await logChannel.send({content:`Linkbot@${package.version} est en ligne, tout roule`});
   console.log("Linkbot est en ligne, tout roule");
+  logger.info("Linkbot est en ligne, tout roule");
 });
 
 client.on("error", console.error);
@@ -78,6 +82,7 @@ module.exports = {player : player, client : client};
 // Event listener pour les interactions soit event principal du bot
 client.on(Discord.Events.InteractionCreate, async interaction => {
   console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
+  logger.info(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
   // pour les boutons (la musique actuellement)
 	if (interaction.isButton()) {
 	  if (interaction.customId === "playButton") {
@@ -122,6 +127,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
       await command.execute(interaction, user);
     } catch (error) {
       console.error(error);
+      logger.error(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
       await interaction.reply({content: 'Il y a eu une erreur en essayant d\'exécuter cette commande !', ephemeral: true});
     }
   }
@@ -133,8 +139,10 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
   try {
     // on execute la commande
     await command.execute(interaction);
+    logger.info(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
   } catch (error) {
     console.error(error);
+    logger.error(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
     await interaction.reply({content: 'Il y a eu une erreur en essayant d\'exécuter cette commande !', ephemeral: true});
   }
 });
@@ -213,10 +221,12 @@ function register(commands, JJcommands) {
   rest.put(Routes.applicationCommands(process.env.clientId), { body: commands },)
   	.then(() => console.log('Successfully registered global application commands.'))
   	.catch(console.error);
+  logger.info('Successfully registered global application commands.');
 
   rest.put(Routes.applicationGuildCommands(process.env.clientId, process.env.guildId), { body: JJcommands },)
   	.then(() => console.log('Successfully registered JJRPs application commands.'))
   	.catch(console.error);
+  logger.info('Successfully registered global application commands.');
   return;
 }
 // Fonction pour supprimer les commandes sur discord
@@ -226,6 +236,7 @@ function unregister() {
   rest.put(Routes.applicationCommands(process.env.clientId), { body: [] })
   	.then(() => console.log('Successfully deleted all application commands.'))
   	.catch(console.error);
+  logger.info('Successfully deleted all application commands.');
   return;
 }
 // Connexion du bot à discord
