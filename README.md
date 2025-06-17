@@ -1,5 +1,5 @@
 # Linkbot
-[![Version](https://img.shields.io/badge/version-2.6.0a-blue.svg)](https://github.com/symsym-1629/Linkbot)
+[![Version](https://img.shields.io/badge/version-2.7.0-blue.svg)](https://github.com/symsym-1629/Linkbot)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 Linkbot est un bot Discord destiné à faciliter le RP jojo's bizzare adventure sur discord. Il permet de gérer des fiches de personnages, les différentes capacités, et bien d'autres choses. Il contient aussi des commandes plus générales afin de faciliter des actions courantes.
