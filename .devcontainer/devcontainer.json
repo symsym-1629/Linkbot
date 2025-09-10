@@ -1,16 +1,18 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+//TODO: setup l'environnement de dev pour qu'il soit le mieux possible
 {
-	"name": "Node.js",
+	"name": "Linkbot",
+	"privileged": true,
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/nix:1": {},
 		"ghcr.io/devcontainers/features/sshd:1": {},
-		"ghcr.io/warrenbuckley/codespace-features/sqlite:1": {}
+		"ghcr.io/warrenbuckley/codespace-features/sqlite:1": {},
+		"ghcr.io/devcontainers-extra/features/fish-apt-get": { "version": "latest" }
 	},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
